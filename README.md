@@ -1,5 +1,8 @@
-# CS2-Bot-Improver
-CS2-Bot-Improver is a plugin for Counter-Strike 2 that improves bots' aim, movement, personalities, strategies, etc.
+# LBTV CS2 Bot Enhancer
+
+LBTV CS2 Bot Enhancer is a Counter-Strike 2 bot enhancement package based on the direct upstream project [CS2-Bot-Improver](https://github.com/ed0ard/CS2-Bot-Improver) by ed0ard.
+
+This project keeps the upstream bot aim, movement, personality, strategy, economy, and offline-match improvements, and adds LBTV-specific features such as bot taunts, AI chat replies, round damage recap, and difficulty display.
 
 Aims to enhance your experience when playing against bots offline or with friends. It can be installed on both clients and servers.
 
