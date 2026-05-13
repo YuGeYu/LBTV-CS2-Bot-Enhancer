@@ -1,0 +1,15 @@
+bin/
+obj/
+
+*.zip
+*.7z
+*.rar
+
+.vs/
+.vscode/
+*.user
+*.suo
+
+dist/
+publish/
+*.log

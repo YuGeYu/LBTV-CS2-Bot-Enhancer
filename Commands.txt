@@ -2,6 +2,9 @@ GAME MODE
 scouts_on
 scouts_off
 
+LBTV
+lbtv_difficulty
+
 BOT AIM STYLE
 
 bot_aim_head

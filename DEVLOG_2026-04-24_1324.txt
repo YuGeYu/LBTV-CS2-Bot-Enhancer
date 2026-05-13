@@ -1,0 +1,38 @@
+开发记录
+时间：2026-04-24 13:24 (Asia/Shanghai)
+视角：开发者
+
+一、这次已经解决的问题，解决方法，心得
+
+1. 已经把旧目录里的回合结束伤害显示迁移到新上游目录。
+解决方法：在 `addons/counterstrikesharp/plugins/RoundDamageRecap` 下新增独立 CounterStrikeSharp 插件项目，依赖版本对齐新上游已有插件使用的 `CounterStrikeSharp.API 1.0.367`。保留按“攻击者 -> 受害者”统计每回合伤害、命中次数、最后已知血量，并在回合结束时只向真人玩家输出聊天区伤害回顾。
+心得：这类展示型功能继续做成旁挂插件是正确边界，不需要侵入 `BotAI` 的内存 patch 和行为逻辑。
+
+2. 已按新需求调整伤害显示文案。
+解决方法：将原先的 `[FACEIT^]` 平台前缀改为 `[LBTV]`，并删除比分头输出，不再显示 `team_xxx [A-B] team_yyy`。当前每行仅显示 `To / From / hits / hp` 明细。
+心得：比分显示依赖插件内部事件累计，热加载或中途启用时容易和真实比分不一致。去掉比分头后，伤害回顾的信息更稳定，职责也更单一。
+
+3. 已新增 BOT 难度可视化提示。
+解决方法：在 `RoundDamageRecap` 中加入 `lbtv_difficulty` 命令，并在每张地图第一次回合开始时自动向真人玩家提示当前难度。识别方式为读取当前生效的 `overrides/botprofile.vpk`，和 `Low / Medium / High` 三个参考 VPK 做 SHA256 比对：Low 显示 `1/3`，Medium 显示 `2/3`，High 显示 `3/3`，无法匹配时显示 `Custom / Unknown [?/3]`。
+心得：直接识别实际生效的 VPK，比额外维护配置文件或 CVar 更可靠，因为项目当前的难度切换本质就是替换根 `overrides/botprofile.vpk`。
+
+4. 已修复非老板定制版安装后难度总显示 `Unknown - active botprofile.vpk missing [?/3]` 的问题。
+解决方法：排查 `E:\ai_pc_fac` 后确认安装器会把资源包安装到 `CS2根目录\game\csgo`，且资源包内确实包含 `overrides/botprofile.vpk` 和 `overrides/Low|Medium|High/botprofile.vpk`。根因在插件路径假设：旧代码只查 `Server.GameDirectory\overrides`，但实际运行时 `Server.GameDirectory` 不一定等于 `game\csgo`。已改为多路径探测：`Server.GameDirectory\overrides`、`Server.GameDirectory\csgo\overrides`、`Server.GameDirectory\game\csgo\overrides`，并从 `AppContext.BaseDirectory` 向上查找最近的 `overrides\botprofile.vpk`。
+心得：CounterStrikeSharp 运行时暴露的目录语义不能只靠本地推断，涉及游戏根目录、`game`、`csgo` 三层路径时，插件侧要容忍不同宿主环境的差异。
+
+5. 已补齐新上游目录的完整打包脚本。
+解决方法：新增 `scripts/Build-FullRelease.ps1` 和 `scripts/Rebuild-OverrideVpks.py`，默认使用 `E:\dow\CS2BotImprover (1).zip` 作为作者完整发布包基底，构建本地插件，重建 4 个 `botprofile.vpk`，覆盖插件产物，同步 `Commands.txt` 和 `cfg`，最后生成 `D:\document\CS2BOT\dist\CS2BotImprover_upstream_lbtv_damage.zip`。
+心得：完整交付仍应以作者发布包为运行时基底，再覆盖本地构建产物。只构建 DLL 不等于可部署。
+
+二、验证结果
+
+1. `RoundDamageRecap` 单独 `Release` 构建通过，0 警告 0 错误。
+2. 新上游完整打包脚本执行通过，最终包为 `D:\document\CS2BOT\dist\CS2BotImprover_upstream_lbtv_damage.zip`。
+3. 最终 ZIP 内包含 `RoundDamageRecap.dll / RoundDamageRecap.deps.json / RoundDamageRecap.pdb`。
+4. 默认根 `overrides/botprofile.vpk` 与 `overrides/Medium/botprofile.vpk` 哈希一致，因此默认显示为 `Medium [2/3]`。
+5. 非老板定制版 `E:\ai_pc_fac\src-tauri\resources\CS2BotImprover.zip` 已替换为修复后的完整包，并重新生成安装器 `E:\ai_pc_fac\workspace\runtime\cs2-bot-improver\bundles\CS2人机增强助手_0.1.10_x64-setup.exe`。
+
+三、仍需注意的问题
+
+1. 上游 `BotAI.csproj` 仍存在 `Common` 引用路径警告 `MSB3245`，当前不影响构建和打包，但后续建议修成稳定的项目引用或配置相关路径。
+2. 已安装旧版本的机器必须重新安装新安装器，或者至少覆盖 `RoundDamageRecap.dll / deps.json / pdb`，否则游戏里仍会加载旧逻辑。

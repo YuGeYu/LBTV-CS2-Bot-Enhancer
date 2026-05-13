@@ -110,6 +110,11 @@ Point at the ground and press `\` on your keyboard to generate all kinds of kniv
 `scouts_off`  
 Input the command after a match begins to turn on/off Flying Scoutsman
 
+### LBTV
+
+`lbtv_difficulty`  
+Shows the currently active bot difficulty profile
+
 ## FAQ
 
 ### How to change the difficulty level

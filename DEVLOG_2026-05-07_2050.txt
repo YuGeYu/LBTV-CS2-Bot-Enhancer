@@ -1,0 +1,220 @@
+开发记录
+时间：2026-05-07 20:50 (Asia/Shanghai)
+视角：开发者
+
+一、本次排查背景
+
+用户反馈当前人机混烟体验偏激进，典型说法是：
+
+“让人机不随便混烟也是情理之中吧，不然封烟干嘛。”
+
+实际现象可以概括为：
+
+玩家往烟里随便混几枪，如果其中一枪命中 BOT，BOT 很快就能隔烟反杀玩家。玩家主观感受会接近“烟雾失效”或“BOT 透烟”。
+
+二、相关实现位置
+
+相关逻辑位于：
+
+addons/counterstrikesharp/plugins/BotState/BotState.cs
+
+关键字段：
+
+private const float ExpandedValue = 4000f;
+private const float NormalValue   = 100f;
+private const float RestoreDelay  = 1.0f;
+
+关键事件：
+
+RegisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
+
+关键逻辑：
+
+private HookResult OnPlayerHurt(EventPlayerHurt @event, GameEventInfo _)
+{
+    try
+    {
+        var victim = @event.Userid;
+        if (victim == null || !victim.IsValid || !victim.IsBot) return HookResult.Continue;
+
+        if (!_isExpanded)
+        {
+            _isExpanded = true;
+            SetSmokeLength(ExpandedValue);
+            AddTimer(RestoreDelay, () =>
+            {
+                SetSmokeLength(NormalValue);
+                _isExpanded = false;
+            });
+        }
+    }
+    catch { }
+    return HookResult.Continue;
+}
+
+private void SetSmokeLength(float value)
+{
+    if (_smokeConVar != null)
+        _smokeConVar.SetValue(value);
+    else
+        Server.ExecuteCommand($"bot_max_visible_smoke_length {value}");
+}
+
+三、机制解释
+
+当前机制不是 BOT 全程无视烟雾。
+
+它的真实行为是：
+
+1. 正常情况下，bot_max_visible_smoke_length 维持在 NormalValue，也就是 100。
+2. 当 BOT 被打中后，OnPlayerHurt 触发。
+3. 如果受害者是 BOT，就把 bot_max_visible_smoke_length 临时提高到 ExpandedValue，也就是 4000。
+4. 这个增强持续 RestoreDelay，也就是 1.0 秒。
+5. 1 秒后恢复到 100。
+
+因此，玩家“随便混两下就被人机杀了”的根本原因是：
+
+玩家混烟打中了 BOT，触发了 BOT 的短时间受击反制窗口。在这个窗口里，BOT 的烟雾可见距离被大幅提高，所以能很快沿着混烟来源反打。
+
+这不是新增 BotTaunt 嘲讽插件导致的，也不是 RoundDamageRecap 导致的。新增嘲讽插件只读取击杀事件和玩家名用于聊天输出，不会修改 BOT 视觉、瞄准、烟雾、反应或难度参数。
+
+四、当前设计初衷
+
+这段逻辑的初衷是合理的：
+
+防止玩家完全依靠烟雾单方面无成本混死 BOT。
+
+如果没有任何反制，玩家可以对着烟里固定点位持续扫射，BOT 即使被命中也无法做出有效反应，离线 BOT 对局会显得过于迟钝。
+
+所以“受击后短暂反打”本身可以保留。
+
+五、当前问题
+
+当前参数组合偏激进：
+
+ExpandedValue = 4000f
+RestoreDelay = 1.0f
+
+问题点有三个：
+
+1. 4000 的烟雾可见距离过大
+
+这个值对玩家感知来说很容易接近“透烟”。只要玩家混烟命中 BOT，BOT 在接下来 1 秒内可能拥有过强的反击视野。
+
+2. 1 秒持续时间偏长
+
+CS2 对枪节奏很快。1 秒足够 BOT 完成锁定、压枪和击杀。对玩家来说，这段时间不是“短暂警觉”，而像是完整反杀窗口。
+
+3. 这是全局 ConVar
+
+bot_max_visible_smoke_length 是全局参数，不是单个 BOT 的私有参数。
+
+当前实现中，只要有一个 BOT 被命中，就会临时提高整体 BOT 烟雾可见距离。虽然持续时间有限，但理论上可能影响同一时间其他 BOT 的烟雾行为。
+
+六、对外解释建议
+
+可以向用户这样解释：
+
+“这不是 BOT 全程透烟，而是当前版本有人机受击反制机制。你混烟如果打中了 BOT，BOT 会在很短时间内获得反打能力，所以可能沿着你混烟的位置反杀。这个设计原本是为了避免玩家一直隔烟白打 BOT，但现在数值确实偏强，导致烟雾的战术价值被削弱。后续会考虑降低强度。”
+
+更短版本：
+
+“你不是因为烟完全没用被杀，而是因为混烟命中了 BOT，触发了 BOT 的短暂受击反制。现在这个反制窗口偏强，我们会考虑削弱。”
+
+七、后续修改建议
+
+建议不要直接删除该机制，而是削弱。
+
+可选方案：
+
+方案 A：降低可见距离
+
+把：
+
+ExpandedValue = 4000f
+
+改为：
+
+ExpandedValue = 800f 或 1200f
+
+优点：
+保留 BOT 反制能力，但不至于像透烟。
+
+风险：
+如果值太低，BOT 可能重新变得容易被烟雾无成本压制。
+
+方案 B：缩短持续时间
+
+把：
+
+RestoreDelay = 1.0f
+
+改为：
+
+RestoreDelay = 0.25f 或 0.35f
+
+优点：
+让 BOT 只获得瞬间警觉，而不是完整击杀窗口。
+
+风险：
+时间太短可能看不到明显效果，尤其服务器 tick 或事件处理延迟存在时。
+
+方案 C：同时降低距离和时间
+
+推荐尝试：
+
+ExpandedValue = 1000f
+RestoreDelay = 0.35f
+
+这是比较稳的折中。玩家混烟命中 BOT 后，BOT 有机会还击，但不应该稳定秒杀。
+
+方案 D：增加触发条件
+
+例如只在 BOT 一秒内受到多次伤害后才开启反制，或者只在伤害超过一定阈值时开启。
+
+优点：
+减少玩家“一颗流弹命中就被反杀”的挫败感。
+
+风险：
+实现复杂度略高，需要记录每个 BOT 的短时间受击状态。
+
+方案 E：尝试单 BOT 反制
+
+理想状态是只让被命中的那个 BOT 获得反制能力，而不是改全局 bot_max_visible_smoke_length。
+
+但目前该逻辑依赖的是引擎 ConVar，天然偏全局。要做单 BOT 反制，可能需要更深层的 BOT 感知/视线/目标选择逻辑改造，风险和工作量都更高。
+
+八、推荐下一步
+
+建议下一版先做保守数值调整：
+
+ExpandedValue: 4000f -> 1000f
+RestoreDelay: 1.0f -> 0.35f
+
+测试重点：
+
+1. 玩家正常封烟后，BOT 是否不再稳定隔烟秒杀。
+2. 玩家混烟命中 BOT 后，BOT 是否仍有一定反击概率。
+3. BOT 是否没有重新变成烟中完全无反应。
+4. 多 BOT 场景下，是否仍会出现其他 BOT 被全局增强牵连的观感。
+
+如果玩家反馈仍然太强，再继续降到：
+
+ExpandedValue = 600f
+RestoreDelay = 0.25f
+
+如果玩家反馈 BOT 又太傻，再回调到：
+
+ExpandedValue = 1200f
+RestoreDelay = 0.4f
+
+九、当前结论
+
+当前混烟争议不是 bug，而是数值设计偏激进。
+
+机制本身有合理目标：防止玩家隔烟无风险刷 BOT。
+
+但现有参数对玩家体验不够友好，尤其是 4000 的可见烟距和 1 秒持续时间，会让烟雾的战术意义被明显削弱。
+
+后续建议以“削弱受击反制窗口”为方向，而不是完全移除混烟反制。
+
