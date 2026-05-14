@@ -1,0 +1,351 @@
+LBTV CS2 Bot Enhancer 开发记录 - 2026-05-14
+
+一、本次开发目标
+
+本次工作的主线是把当前稳定改造版整理成可公开发布、可继续维护的项目形态。
+
+具体目标包括：
+
+1. 保留稳定目录 `CS2-Bot-Improver_upstream` 作为当前权威工作区。
+2. 删除不稳定的最新上游试验目录 `CS2-Bot-Improver_clean`。
+3. 基于稳定版本完成一次完整构建打包。
+4. 创建并推送 GitHub 项目 `YuGeYu/LBTV-CS2-Bot-Enhancer`。
+5. 上传整包到 GitHub Releases。
+6. 在公开仓库中明确标注直接上游项目 `CS2-Bot-Improver`。
+7. 清理旧 AI API 地址在公开文件中的残留。
+8. 对少数用户启动时报 `Source2ServerConfig001` 的问题做初步技术归因。
+
+
+二、项目命名与上游归属
+
+最终公开项目名确定为：
+
+`LBTV CS2 Bot Enhancer`
+
+GitHub 仓库名：
+
+`LBTV-CS2-Bot-Enhancer`
+
+仓库地址：
+
+`https://github.com/YuGeYu/LBTV-CS2-Bot-Enhancer`
+
+README 开头已经改为项目自己的名称，同时明确写明：
+
+本项目基于直接上游项目 `CS2-Bot-Improver`：
+
+`https://github.com/ed0ard/CS2-Bot-Improver`
+
+这样做的原因：
+
+1. 公开项目必须保留上游来源说明。
+2. 避免用户误以为本项目是完全独立原创代码库。
+3. 便于后续从上游同步修复或对比行为变化。
+
+
+三、稳定版本与最新上游的取舍
+
+曾经创建过一个干净最新上游 worktree：
+
+`D:\document\CS2BOT\CS2-Bot-Improver_clean`
+
+该目录来自上游最新 `origin/main`，当时用于评估是否重新以最新上游为基底恢复功能。
+
+实际评估后发现：
+
+1. 最新上游不一定稳定。
+2. 新版 `BotState` 引入了 Ray-Trace 依赖。
+3. 完整打包需要额外处理 `RayTraceApi`、`RayTraceImpl`、Metamod RayTrace 运行时。
+4. 当前发布目标更适合继续基于已经验证过的稳定改造版。
+
+因此删除了 `CS2-Bot-Improver_clean`，保留 `CS2-Bot-Improver_upstream` 作为当前主线。
+
+删除方式：
+
+`git worktree remove --force D:\document\CS2BOT\CS2-Bot-Improver_clean`
+
+并执行：
+
+`git worktree prune`
+
+
+四、完整构建与打包
+
+当前稳定发布流程仍然使用：
+
+`powershell -ExecutionPolicy Bypass -File scripts\Build-FullRelease.ps1`
+
+该脚本会完成：
+
+1. 构建各个 CounterStrikeSharp 插件项目。
+2. 展开作者完整发布包作为 staging 基底。
+3. 重建 `overrides` 下的 `botprofile.vpk`。
+4. 覆盖本地构建出的插件产物。
+5. 同步 `Commands.txt`、`cfg` 等资源。
+6. 压缩生成最终整包。
+
+最终稳定包路径：
+
+`D:\document\CS2BOT\dist\CS2BotImprover_upstream_lbtv_damage.zip`
+
+该包已经上传到 GitHub Releases：
+
+`https://github.com/YuGeYu/LBTV-CS2-Bot-Enhancer/releases/tag/v0.1.0-lbtv`
+
+公开下载文件名：
+
+`LBTV-CS2-Bot-Enhancer-v0.1.0.zip`
+
+发布包大小：
+
+`55,529,785 bytes`
+
+
+五、本次确认进入整包的关键功能
+
+本次最终整包中确认包含以下功能模块：
+
+1. 上游原有人机增强功能。
+2. `BotTaunt` BOT 嘲讽插件。
+3. BOT 击杀真人后的 LBTV 风格红色嘲讽。
+4. 真人聊天触发 BOT AI 绿色回复。
+5. BOT MVP 后的 AI 嘲讽。
+6. 回合开场 BOT 轮流发言。
+7. `RoundDamageRecap` 回合结束伤害统计。
+8. `lbtv_difficulty` 难度显示命令。
+9. `Low / Medium / High` 三档 botprofile VPK。
+10. `optional/InventorySimulator` 可选组件。
+
+最终包内已核验：
+
+1. `BotTaunt.dll`
+2. `BotTaunt.deps.json`
+3. `BotTaunt.pdb`
+4. `RoundDamageRecap.dll`
+5. `RoundDamageRecap.deps.json`
+6. `RoundDamageRecap.pdb`
+7. `BotState.dll`
+8. `Commands.txt`
+9. `overrides/botprofile.vpk`
+10. `overrides/Low/botprofile.vpk`
+11. `overrides/Medium/botprofile.vpk`
+12. `overrides/High/botprofile.vpk`
+
+构建过程中仍存在一个已知上游警告：
+
+`BotAI.csproj` 构建时提示找不到 `Common` 引用。
+
+该警告不是当前发布阻断项，因为：
+
+1. `Common.dll` 能单独构建成功。
+2. `BotAI.dll` 也能生成。
+3. 打包脚本会把 `Common.dll` 和 `BotAI.dll` 一并复制进最终包。
+
+
+六、公开仓库整理
+
+为了推送 GitHub，新增了 `.gitignore`。
+
+主要排除：
+
+1. `bin/`
+2. `obj/`
+3. `dist/`
+4. `publish/`
+5. `*.zip`
+6. `*.7z`
+7. `*.rar`
+8. `.vs/`
+9. `.vscode/`
+10. `*.user`
+11. `*.suo`
+
+推送前已清理插件目录下的 `bin` 和 `obj` 构建产物。
+
+远端设置：
+
+1. `origin` 指向本项目公开仓库：
+   `https://github.com/YuGeYu/LBTV-CS2-Bot-Enhancer.git`
+
+2. `upstream` 保留原作者仓库：
+   `https://github.com/ed0ard/CS2-Bot-Improver.git`
+
+这样后续可以：
+
+1. 向自己的仓库正常提交发布。
+2. 必要时从上游拉取更新进行对比。
+
+
+七、AI 调用接口清理
+
+用户手动把 AI 调用接口切换到了自己的服务。
+
+当前运行代码中，AI 请求集中在：
+
+`addons/counterstrikesharp/plugins/BotTaunt/BotTaunt.cs`
+
+关键常量：
+
+1. `AiApiUrl`
+2. `AiApiKey`
+
+检查结论：
+
+1. 运行源码中没有旧 AI API 地址残留。
+2. `BotTaunt` 单独构建通过，0 警告，0 错误。
+3. 中文提示词内容实际是正常 UTF-8，PowerShell 普通输出乱码只是控制台编码问题。
+4. 旧 API 地址曾经只残留在历史 devlog 中，已清理为中性描述。
+
+清理后的表达方式改为：
+
+1. “项目自有的 AI 聊天服务”
+2. “认证信息按当前发布需求随插件配置”
+
+注意：
+
+本项目当前策略允许公开 AI 接口和认证信息，因此没有把它改成私密配置。但长期如果公开范围扩大，仍建议考虑配置文件或服务端代理。
+
+
+八、GitHub Release 上传方式
+
+本机没有安装 GitHub CLI `gh`。
+
+实际上传方式：
+
+1. 通过 `git credential fill` 读取本机 GitHub 凭据管理器中的凭据。
+2. 直接调用 GitHub Releases API 创建 release。
+3. 上传整包 ZIP 到 release assets。
+
+Release tag：
+
+`v0.1.0-lbtv`
+
+Release 名称：
+
+`LBTV CS2 Bot Enhancer v0.1.0`
+
+资产文件：
+
+`LBTV-CS2-Bot-Enhancer-v0.1.0.zip`
+
+
+九、少数用户启动 fatal error 的排障记录
+
+用户反馈截图中的错误：
+
+`FATAL ERROR: CAppSystemDict: Unable to create interface Source2ServerConfig001 from server (Dependency of application)`
+
+用户复现条件：
+
+1. 验证游戏完整性。
+2. 重新安装插件。
+3. 选择 BOT 模式。
+4. 选择高难度。
+5. 启动游戏，先出现正常全屏黑框。
+6. 随后弹出该 fatal error，黑框消失，无法进入游戏。
+
+初步判断：
+
+这不是 `High/botprofile.vpk` 高难度文件本身的问题。
+
+理由：
+
+1. 高难度只影响 `overrides/High/botprofile.vpk`。
+2. `botprofile.vpk` 不会创建 `Source2ServerConfig001` 这种 Source2 引擎接口。
+3. 报错发生在游戏启动加载 server app system 阶段。
+4. 这个阶段通常早于 C# 插件逻辑执行。
+
+更合理的判断：
+
+这是 BOT 模式启用后的本机底层加载链异常。
+
+BOT 模式下 `gameinfo.gi` 会加入：
+
+`Game csgo/addons/metamod`
+
+这会让游戏加载：
+
+`addons/metamod/bin/win64/server.dll`
+
+如果该用户本机存在以下情况，就可能触发接口创建失败：
+
+1. 旧版 Metamod 残留。
+2. CounterStrikeSharp 残留。
+3. `addons` 目录里有其他插件冲突。
+4. 安装覆盖不完整。
+5. 杀软或权限导致 DLL 复制失败。
+6. Steam 验证完整性后没有清理第三方 `addons` 文件。
+7. 使用特殊客户端、平台环境或非标准游戏分支。
+
+由于该问题大约 200 人只有 1 人反馈，不应直接定性为整包普遍不兼容。
+
+如果是整包里的 Metamod 普遍失效，应当大面积出现同样 fatal error。
+
+
+十、建议给用户的处理流程
+
+对出现该问题的用户，建议执行彻底清理，而不是只验证完整性：
+
+1. 退出 CS2 和 Steam。
+2. 打开 CS2 的 `game/csgo` 目录。
+3. 删除 `gameinfo.gi`。
+4. 删除 `addons/metamod`。
+5. 删除 `addons/metamod.vdf`。
+6. 删除 `addons/metamod_x64.vdf`。
+7. 删除 `addons/counterstrikesharp`。
+8. 删除 `overrides`。
+9. Steam 验证游戏完整性。
+10. 重新解压我们的整包。
+11. 再选择 BOT 模式。
+
+如果仍然复现，需要收集：
+
+1. `game/csgo/gameinfo.gi`
+2. `game/csgo/addons` 目录截图。
+3. `addons/metamod/bin/win64/server.dll` 文件属性和版本。
+4. `addons/metamod/bin/win64/metamod.2.cs2.dll` 文件属性和版本。
+5. `addons/counterstrikesharp/bin/win64/counterstrikesharp.dll` 是否存在。
+6. 用户是否装过其他 CS2 插件或平台工具。
+
+
+十一、后续产品侧建议
+
+建议后续安装器增加一个“修复安装 / 彻底重装 BOT 环境”按钮。
+
+该功能执行：
+
+1. 备份当前 `gameinfo.gi`。
+2. 删除旧 `addons/metamod`。
+3. 删除旧 `addons/counterstrikesharp`。
+4. 删除旧 `overrides`。
+5. 重新复制当前整包文件。
+6. 重新写入 BOT 模式 `gameinfo.gi`。
+
+这样能降低残留型问题概率。
+
+另一个长期优化方向：
+
+不要直接用发布包里的旧 `gameinfo.gi` 覆盖用户当前文件，而是在用户当前 CS2 版本的 `gameinfo.gi` 基础上插入必要 SearchPath。
+
+这样可以降低 CS2 更新后，旧 `gameinfo.gi` 覆盖新文件导致启动阶段异常的风险。
+
+
+十二、当前结论
+
+本次开发已经把项目从本地改造版推进到公开发布状态。
+
+当前主线判断：
+
+1. 稳定工作区继续使用 `CS2-Bot-Improver_upstream`。
+2. GitHub 仓库已经建立并推送。
+3. Release 整包已经上传。
+4. 旧 AI API 地址已经从当前公开文件中清理。
+5. 直接上游归属已经写入 README 首屏。
+6. 少数用户 fatal error 更偏向本机残留/加载链污染问题，而不是高难度配置或 AI 功能问题。
+
+后续优先级：
+
+1. 做安装器的彻底清理/修复安装功能。
+2. 改进 `gameinfo.gi` 写入策略，尽量基于用户当前文件增量修改。
+3. 继续跟踪个别用户的 `Source2ServerConfig001` 报错样本。
+4. 必要时准备一个更新 Metamod/CounterStrikeSharp 的兼容整包。
