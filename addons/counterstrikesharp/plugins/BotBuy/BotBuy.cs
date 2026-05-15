@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Utils;
 using CounterStrikeSharp.API.Modules.Cvars;
+using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Timers;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace BotBuyPatch;
 public sealed class BotBuyPatch : BasePlugin
 {
     public override string ModuleName        => "BotBuyPatch";
-    public override string ModuleVersion     => "1.0.6";
+    public override string ModuleVersion     => "1.0.7";
     public override string ModuleAuthor      => "ed0ard";
     public override string ModuleDescription => "Enable bots to take more buy options";
 
@@ -24,6 +25,35 @@ public sealed class BotBuyPatch : BasePlugin
     private Dictionary<int, List<string>> _prevWeapons = new();
     private Dictionary<int, int> _prevMoney = new();
     private Dictionary<int, int> _prevArmor = new();
+    private bool _announceWeaponDrops = false;
+//----------------------------------------------------------------------------------------------
+    [ConsoleCommand("lbtv_bot_drop_announce", "Enable or disable public bot weapon drop chat. Usage: lbtv_bot_drop_announce 0/1")]
+    public void OnBotDropAnnounceCommand(CCSPlayerController? player, CommandInfo command)
+    {
+        if (command.ArgCount < 2)
+        {
+            command.ReplyToCommand($"lbtv_bot_drop_announce is {(_announceWeaponDrops ? 1 : 0)}");
+            return;
+        }
+
+        var value = command.ArgByIndex(1);
+        if (value == "1")
+        {
+            _announceWeaponDrops = true;
+            command.ReplyToCommand("lbtv_bot_drop_announce set to 1");
+            return;
+        }
+
+        if (value == "0")
+        {
+            _announceWeaponDrops = false;
+            command.ReplyToCommand("lbtv_bot_drop_announce set to 0");
+            return;
+        }
+
+        command.ReplyToCommand("Usage: lbtv_bot_drop_announce 0/1");
+    }
+
 //----------------------------------------------------------------------------------------------
     [GameEventHandler]
     public HookResult OnPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)
@@ -509,7 +539,10 @@ public sealed class BotBuyPatch : BasePlugin
                             if (rich.InGameMoneyServices.Account < 0) rich.InGameMoneyServices.Account = 0;
                             Utilities.SetStateChanged(rich, "CCSPlayerController", "m_pInGameMoneyServices");
 
-                            Server.PrintToChatAll($"{ChatColors.Green}{rich.PlayerName}{ChatColors.Yellow}: {poorPlayer.PlayerName}, I dropped a weapon for ya");
+                            if (_announceWeaponDrops)
+                            {
+                                Server.PrintToChatAll($"{ChatColors.Green}{rich.PlayerName}{ChatColors.Yellow}: {poorPlayer.PlayerName}, I dropped a weapon for ya");
+                            }
                             given++;
                         }
                     }
