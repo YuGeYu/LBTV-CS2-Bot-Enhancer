@@ -4,8 +4,6 @@ scouts_off
 
 LBTV
 lbtv_difficulty
-lbtv_bot_drop_announce 0
-lbtv_bot_drop_announce 1
 
 BOT AIM STYLE
 
