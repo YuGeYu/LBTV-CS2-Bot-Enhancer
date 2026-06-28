@@ -18,6 +18,36 @@ bot_nades more
 bot_nades max
 bot_nades off
 
+BOT TAUNT / AI CHAT
+
+lbtv_bot_taunt 1
+lbtv_bot_taunt 0
+lbtv_bot_chat 1
+lbtv_bot_chat 0
+lbtv_bot_chat_reload
+lbtv_bot_chat_diag
+lbtv_bot_chat_saytest hello
+lbtv_bot_chat_test hello
+lbtv_bot_rivalry 1
+lbtv_bot_rivalry 0
+
+ROUND DAMAGE / DIFFICULTY
+
+lbtv_difficulty
+
+MAP ROTATION
+
+lbtv_map_rotation 1
+lbtv_map_rotation 0
+lbtv_map_next
+
+KNIVES
+
+lbtv_knife_hot
+lbtv_knife_rdm
+lbtv_knife_all
+lbtv_knife_spawn
+
 ADD TEAMS
 
 1.Team Vitality

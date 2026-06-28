@@ -14,9 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Common">
-      <HintPath>..\..\..\..\Tmp\ArchiveV02\Common\bin\Debug\net8.0\Common.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="Common.csproj">
+      <Private>false</Private>
+    </ProjectReference>
 
   </ItemGroup>
 

@@ -1,6 +1,9 @@
 import raw from "./commands.txt?raw";
 
-/** Full Commands.txt text, bundled (Block 10 viewer reads this, not disk). */
+/** Full Commands.txt text, bundled (Block 10 viewer reads this, not disk).
+ * Includes BotTaunt commands such as lbtv_bot_taunt, lbtv_bot_chat, and lbtv_bot_rivalry.
+ * Includes cfg alias knife commands such as lbtv_knife_hot, lbtv_knife_rdm, and lbtv_knife_all.
+ */
 export const COMMANDS_TXT: string = raw;
 
 export type Team = {

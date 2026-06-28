@@ -97,6 +97,48 @@ Bots have minimal limitations and think less before throwing nades
 `bot_nades`  
 Shows the current nade throwing mode
 
+### Bot Taunt / AI Chat
+
+`lbtv_bot_taunt 0/1`  
+Disable or enable LBTV bot taunts.
+
+`lbtv_bot_chat 0/1`  
+Disable or enable AI chat replies. The AI chat API key is intentionally blank in the public package; fill it in `addons/counterstrikesharp/configs/plugins/BotTaunt/BotTaunt.json` before using AI replies.
+
+`lbtv_bot_chat_reload`  
+Reloads both `addons/counterstrikesharp/configs/plugins/BotTaunt/BotTaunt.json` and `addons/counterstrikesharp/configs/plugins/BotTaunt/Taunts.json` without restarting the server.
+
+`lbtv_bot_chat_diag`  
+Shows BotTaunt AI chat diagnostics.
+
+`lbtv_bot_chat_saytest <message>`  
+Makes a bot send a native say message for quick chat-path testing.
+
+`lbtv_bot_chat_test <message>`  
+Sends a test message to the configured AI endpoint.
+
+`lbtv_bot_rivalry 0/1`  
+Disable or enable low-frequency bot-vs-bot taunts. It is off by default and can be enabled with `lbtv_bot_rivalry 1`.
+
+Editable taunt text is stored in `addons/counterstrikesharp/configs/plugins/BotTaunt/Taunts.json`.
+
+### Round Damage / Difficulty
+
+`lbtv_difficulty`  
+Shows the active bot difficulty profile using the current `overrides/botprofile.vpk` hash. The RoundDamageRecap plugin also prints round-end damage dealt/taken lines and attributes HE, molotov, incendiary, inferno, and thrown utility damage back to the correct thrower where CS2 does not provide a direct attacker.
+
+### Map Rotation
+
+Map rotation is off by default. Run `lbtv_map_rotation 1` to enable the fixed LBTV map rotation, and run `lbtv_map_rotation 0` to disable it again.
+
+`lbtv_map_rotation`  
+Shows whether rotation is enabled, the current map, and the next map.
+
+`lbtv_map_next`  
+Immediately changes to the next map in the rotation.
+
+Current rotation order: `de_anubis -> de_overpass -> de_inferno -> de_mirage -> de_dust2 -> de_nuke -> de_ancient -> de_train -> de_vertigo -> de_cache`.
+
 ### Buy
 
 Input the weapon's name in your console to give every bot this weapon from the next round
@@ -146,7 +188,18 @@ For example, if you wanna add Vit to CT, copy the commands below.
 
 ### Knives
 
-Point at the ground and press `\` on your keyboard to generate all kinds of knives there.
+Point at the ground and press `\` on your keyboard to spawn knives using the current LBTV knife mode. This is implemented by cfg aliases in the four bot configs, not by a C# plugin command.
+
+`lbtv_knife_hot`  
+Sets `\` to spawn five popular knives: Karambit, Butterfly, Talon, M9 Bayonet, and Bayonet.
+
+`lbtv_knife_rdm`  
+Sets `\` to spawn one rotating set of five knives. Run `lbtv_knife_rdm` again to switch to the next set.
+
+`lbtv_knife_all`  
+Sets `\` to spawn all knife types.
+
+`lbtv_knife_spawn` is the internal alias bound to `\` by `cfg/my_bot_normal_config*.cfg` and `cfg/my_bot_ffa_config*.cfg`.
 
 ### Flying Scoutsman
 
@@ -238,3 +291,7 @@ Run `sv_standable_normal 0.7` in your game console
 
 ## License
 GPL-3.0
+
+## Development
+
+Maintainer notes for rebuilding the full LBTV package from the upstream package base are in [docs/DEVELOPMENT_zh-CN.md](docs/DEVELOPMENT_zh-CN.md).
