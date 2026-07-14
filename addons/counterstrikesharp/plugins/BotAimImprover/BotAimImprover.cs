@@ -17,8 +17,8 @@ namespace BotAimImprover;
 public class BotAimImprover : BasePlugin
 {
     public override string ModuleName => "BotAimImprover";
-    public override string ModuleVersion => "2.1.1";
-    public override string ModuleAuthor => "ed0ard & htfy96";
+    public override string ModuleVersion => "2.1.3";
+    public override string ModuleAuthor => "ed0ard & htfy96 & XBribo";
     public override string ModuleDescription => "Restores intelligent aim part selection for CS2 bots.";
 
     // ============================================================
@@ -85,8 +85,8 @@ public class BotAimImprover : BasePlugin
 
     private static readonly int[] _priorityBody =
     {
-        3, 4, 5,         // CHEST, GUT, PELVIS
-        6, 7, 10, 11,    // L_CHEST, R_CHEST, L_GUT, R_GUT
+        4, 5, 3,         // GUT, PELVIS, CHEST
+        10, 11, 6, 7,    // L_GUT, R_GUT, L_CHEST, R_CHEST
         8, 9,            // L_SHOULDER, R_SHOULDER
         2, 1, 0,         // JAW, NECK, HEAD
         12, 13, 14, 15,  // L_THIGH, R_THIGH, L_SHIN, R_SHIN
@@ -119,8 +119,12 @@ public class BotAimImprover : BasePlugin
         sig: "55 48 89 E5 41 55 41 54 53 48 89 FB 48 83 EC 58 8B 8F E8 59 00 00 83 F9 FF");
 
     private static readonly Offsets WindowsOffsets = new(
-        ts: 0x59A4, en: 0x5A10, vis: 0x5A14, pbot: 0x1298,
-        sig: "48 8B C4 55 57 48 8D 68 A1 48 81 EC A8 00 00 00 48 8B F9 0F 29 70 D8 8B 89 10 5A 00 00 83 F9 FF");
+        ts: 0x599C,
+        en: 0x5A08,
+        vis: 0x5A0C,
+        pbot: 0x12C0,
+        sig: "48 8B C4 55 57 48 8D 68 ? 48 81 EC ? ? ? ? 48 8B F9 0F 29 70 ? 8B 89 ? ? ? ? 83 F9 FF"
+    );
 
     private Offsets _off;
 

@@ -7,6 +7,11 @@ deploy_backups/
 *.zip
 *.7z
 *.rar
+!vendor/counterstrikesharp/counterstrikesharp-with-runtime-windows-1.0.371.zip
+!vendor/metamod/mmsource-2.0.0-git1406-windows.zip
+!vendor/raytrace/RayTrace-CSS-API-v1.0.16.tar.gz
+!vendor/raytrace/RayTrace-MM-v1.0.16-windows.tar.gz
+!vendor/bothider/BotHider-windows-0.3.0.zip
 
 # Agent / tooling scratch
 .agents/

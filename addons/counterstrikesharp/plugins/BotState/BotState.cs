@@ -483,6 +483,7 @@ public class BotState : BasePlugin
             if (isAimingAtEnemy && !curIsAttacking)
             {
                 bot.IsAttacking = true;
+                curIsAttacking = true;
             }
             // Cancel Crouch After Attack
             if (_prevIsAttacking.TryGetValue(idx, out bool prevAttack))
@@ -825,6 +826,7 @@ public class BotState : BasePlugin
 
         var bot = pawn.Bot;
         if (bot == null) return HookResult.Continue;
+
         // Sniper Peek
         _hasFiredThisAttack.Add(idx);
 

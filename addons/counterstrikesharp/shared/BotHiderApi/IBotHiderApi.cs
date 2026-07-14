@@ -4,7 +4,7 @@ public interface IBotHiderApi
 {
     bool IsManagedBot(int slot);
 
-    ulong GetSyntheticSteamId(int slot);
+    ulong GetBotSteamId(int slot);
 
     int[] GetManagedSlots();
 
@@ -14,11 +14,19 @@ public interface IBotHiderApi
 
     string GetCrosshairCode(int slot);
 
+    uint GetScoreboardFlair(int slot);
+
+    (string Name, ulong Addr)[] GetSignatures();
+
     // returns false if the slot is out of range.
     bool SetBotSteamId(int slot, ulong steamId64);
 
+    bool SetCrosshairCode(int slot, string code);
+
     // returns false if the slot/name is invalid.
     bool SetPersonaName(int slot, string name);
+
+    bool SetScoreboardFlair(int slot, uint itemDefIndex);
 
     // Global disguise toggle; off lets the bot manager spawn bots on aim_*/practice maps
     bool SetDisguise(bool enabled);

@@ -19,6 +19,7 @@ Aims to enhance your experience when playing against bots offline or with friend
 10. Removes the prefix from bot names
 11. Tweaks game rules to make them more friendly to bots
 12. Adds some commands to make the game more fun
+13. Includes an optional BotVision integration for dedicated smoke-visibility testing
 
 ## Installation
 
@@ -126,6 +127,22 @@ Editable taunt text is stored in `addons/counterstrikesharp/configs/plugins/BotT
 
 `lbtv_difficulty`  
 Shows the active bot difficulty profile using the current `overrides/botprofile.vpk` hash. The RoundDamageRecap plugin also prints round-end damage dealt/taken lines and attributes HE, molotov, incendiary, inferno, and thrown utility damage back to the correct thrower where CS2 does not provide a direct attacker.
+
+### BotVision
+
+BotVision source/runtime inputs remain in the repository for dedicated-server testing. Production packages exclude its VDF by default until the current CS2 build passes the staged native-plugin verification. Build a test package with `scripts/Build-FullRelease.ps1 -IncludeBotVision`.
+
+`bv_status`
+Prints hook hit/blocked counts and resolved signature status.
+
+`bv_smoke_mode <0|1>`
+Sets smoke handling. `0` uses volume-smoke blocking, and `1` uses stock ball-smoke behavior.
+
+`bv_density_threshold <d>`
+Sets the volume-smoke blocking threshold. The upstream default is `0.2`.
+
+`bv_test_los <x1> <y1> <z1> <x2> <y2> <z2>`
+Tests smoke density along a segment.
 
 ### Map Rotation
 
@@ -281,6 +298,7 @@ Run `sv_standable_normal 0.7` in your game console
 [CS2_ExecAfter_No_Admin](https://github.com/ed0ard/CS2_ExecAfter_No_Admin) forked from [kus](https://github.com/kus)  
 [CS2-Bot-Randomizer](https://github.com/ed0ard/CS2-Bot-Randomizer)  
 [CS2-Bot-Hider](https://github.com/XBribo/CS2-Bot-Hider) by [XBribo](https://github.com/XBribo)  
+[CS2-Bot-Vision](https://github.com/XBribo/CS2-Bot-Vision) by [XBribo](https://github.com/XBribo)
 [CSGOBetterBots](https://github.com/manicogaming/CSGOBetterBots/blob/master/addons/sourcemod/data/bot_info.json) by [manico](https://github.com/manicogaming)  
 [CS2-Smarter-Bot](https://github.com/ed0ard/CS2-Smarter-Bot)  
 [CS2-BotAI](https://github.com/ed0ard/CS2-BotAI) forked from [Austin](https://github.com/Austinbots)  

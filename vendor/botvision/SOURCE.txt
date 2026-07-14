@@ -1,0 +1,18 @@
+Repository: https://github.com/XBribo/CS2-Bot-Vision
+Tag: v0.1.1-alpha
+Binary asset: BotVision-windows-0.1.1-alpha.zip
+Binary SHA256: 64affca27f6e14bee0f7100df672775f61171a47152c3076e88e65c63cadd5d3
+
+Release status: prerelease. Upstream labels this release as "Needs more testing -- not recommended."
+
+Source snapshot:
+vendor/botvision/source/CS2-Bot-Vision-v0.1.1-alpha/
+
+Runtime assets:
+addons/BotVision/
+addons/metamod/BotVision.vdf
+
+The upstream source snapshot is kept unchanged. In upstream configs, the Metamod
+VDF is named BotHider.vdf. This project adapts the runtime VDF to
+addons/metamod/BotVision.vdf with alias "BotVision" so it does not conflict with
+the existing BotHider plugin shipped by this package.

@@ -1,0 +1,11 @@
+{
+  "ThrowRecoverySeconds": {
+    "flash": 0.55,
+    "smoke": 0.85,
+    "he": 0.65,
+    "molotov": 0.8,
+    "incgrenade": 0.8,
+    "decoy": 0.55
+  },
+  "ConfigVersion": 1
+}

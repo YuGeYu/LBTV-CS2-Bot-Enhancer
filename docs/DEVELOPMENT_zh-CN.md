@@ -12,6 +12,9 @@
 - `Panel/`：Windows 面板源码和相关前端资源。
 - `Commands.txt`、`README.md`：玩家向命令和安装说明，发布包内应使用本仓库版本。
 - `vendor/upstream/CS2BotImprover_upstream_latest.zip`：上游/旧整包底座。它提供完整第三方运行时、目录骨架、备份文件和不在本仓库重新维护的资源。
+- `vendor/counterstrikesharp/counterstrikesharp-with-runtime-windows-1.0.371.zip`：固定的 CounterStrikeSharp 1.0.371 Windows 完整运行时覆盖包。
+- `vendor/metamod/mmsource-2.0.0-git1406-windows.zip`：支持当前 CS2 engine 26 的 MetaMod:Source 2.0 dev 1406 Windows 运行时覆盖包。
+- `vendor/botvision/`：BotVision 上游二进制和源码快照。源码只留在仓库，不进入玩家整包。
 
 ## 核心原则
 
@@ -20,6 +23,10 @@
 3. 第三方运行时和上游未改动文件优先来自旧整包，避免漏掉 CounterStrikeSharp、MetaMod、Panel 运行依赖、备份目录等完整资产。
 4. 本仓库维护的源码、配置、难度档、说明文件必须覆盖旧整包中的同名内容。
 5. 发布前要检查压缩包内容，而不是只看构建命令是否成功。
+6. `vendor/botvision/source/CS2-Bot-Vision-v0.1.1-alpha/` 是上游源码快照，保持原样；玩家运行资产来自 `addons/BotVision/`。
+7. BotVision 的运行 VDF 必须独立命名为 `addons/metamod/BotVision.vdf`，不要使用上游源码快照里的 `BotHider.vdf`，避免和本项目已有 BotHider 冲突。
+8. 展开旧整包后，先将 CounterStrikeSharp 1.0.371 覆盖包写入 staging；覆盖操作不得删除旧底座的 `addons/counterstrikesharp/dotnet/` 内置 .NET 10 运行时，本仓库的 `configs/plugins/` 随后再覆盖回 staging。
+9. 旧整包中的 MetaMod:Source 2.0 dev 1402 无法加载当前 engine 26；必须用固定的 dev 1406 包覆盖 `addons/metamod/bin/`，同时保留本仓库维护的 BotHider、CounterStrikeSharp 和 RayTrace VDF。BotVision 只在 `-IncludeBotVision` 测试包中启用。
 
 ## 由老整包打出新整包
 
@@ -107,6 +114,7 @@ Copy-Item overrides\* dist\LBTVCS2BotEnhancer\overrides -Recurse -Force
 
 Copy-Item addons\metamod\*.vdf dist\LBTVCS2BotEnhancer\addons\metamod\ -Force
 Copy-Item addons\BotHider\*.json dist\LBTVCS2BotEnhancer\addons\BotHider\ -Force
+Copy-Item addons\BotVision\* dist\LBTVCS2BotEnhancer\addons\BotVision\ -Recurse -Force
 Copy-Item addons\counterstrikesharp\configs\* dist\LBTVCS2BotEnhancer\addons\counterstrikesharp\configs\ -Recurse -Force
 Copy-Item addons\counterstrikesharp\plugins\NadeSystem\grenades\* dist\LBTVCS2BotEnhancer\addons\counterstrikesharp\plugins\NadeSystem\grenades\ -Recurse -Force
 ```
@@ -115,7 +123,7 @@ Copy-Item addons\counterstrikesharp\plugins\NadeSystem\grenades\* dist\LBTVCS2Bo
 
 ### 5. 覆盖插件构建产物
 
-构建完成后，将每个插件的 `bin/Release/net8.0` 产物覆盖到 staging 的对应插件目录。至少要覆盖：
+构建完成后，将每个插件的构建产物覆盖到 staging 的对应插件目录。BotAimImprover 与 NadeSystem 因依赖 CounterStrikeSharp.API 1.0.371，使用 `bin/Release/net10.0`；其余插件仍使用 `bin/Release/net8.0`。至少要覆盖：
 
 ```text
 *.dll
@@ -126,9 +134,9 @@ Copy-Item addons\counterstrikesharp\plugins\NadeSystem\grenades\* dist\LBTVCS2Bo
 示例：
 
 ```powershell
-Copy-Item addons\counterstrikesharp\plugins\NadeSystem\bin\Release\net8.0\NadeSystem.dll dist\LBTVCS2BotEnhancer\addons\counterstrikesharp\plugins\NadeSystem\ -Force
-Copy-Item addons\counterstrikesharp\plugins\NadeSystem\bin\Release\net8.0\NadeSystem.deps.json dist\LBTVCS2BotEnhancer\addons\counterstrikesharp\plugins\NadeSystem\ -Force
-Copy-Item addons\counterstrikesharp\plugins\NadeSystem\bin\Release\net8.0\NadeSystem.pdb dist\LBTVCS2BotEnhancer\addons\counterstrikesharp\plugins\NadeSystem\ -Force
+Copy-Item addons\counterstrikesharp\plugins\NadeSystem\bin\Release\net10.0\NadeSystem.dll dist\LBTVCS2BotEnhancer\addons\counterstrikesharp\plugins\NadeSystem\ -Force
+Copy-Item addons\counterstrikesharp\plugins\NadeSystem\bin\Release\net10.0\NadeSystem.deps.json dist\LBTVCS2BotEnhancer\addons\counterstrikesharp\plugins\NadeSystem\ -Force
+Copy-Item addons\counterstrikesharp\plugins\NadeSystem\bin\Release\net10.0\NadeSystem.pdb dist\LBTVCS2BotEnhancer\addons\counterstrikesharp\plugins\NadeSystem\ -Force
 ```
 
 脚本化时应像 `fresh` 项目一样维护一个插件清单，逐项校验构建产物是否存在，缺失就直接失败。
@@ -195,6 +203,10 @@ Get-FileHash dist\LBTVCS2BotEnhancer.zip -Algorithm SHA256
 - staging 中的 `README.md` 和 `Commands.txt` 是本仓库版本。
 - 关键插件目录内的 `.dll` 时间戳来自本次构建。
 - `addons/counterstrikesharp/configs` 中的配置目录没有被漏掉。
+- `addons/counterstrikesharp/api/CounterStrikeSharp.API.deps.json` 包含 `CounterStrikeSharp.API/1.0.371`，且 `addons/counterstrikesharp/dotnet/` 仍存在。
+- `addons/metamod/bin/win64/server.dll` 的产品版本为 `2.0.0-dev+1406`，启动日志中不再出现 `Detected engine 26 but could not load`。
+- 正式包不包含 BotVision DLL/VDF；使用 `-IncludeBotVision` 时才检查 `addons/BotVision/bin/win64/BotVision.dll` 与 `addons/metamod/BotVision.vdf`。
+- staging 和 zip 中没有 `vendor/`，BotVision 源码快照不能进入玩家整包。
 - `overrides` 下存在本次重新生成的 `botprofile.vpk`。
 - 新整包没有包含 `bin/`、`obj/`、`.git/`、`node_modules/`、脚本临时目录或旧 staging 外壳目录。
 
@@ -225,6 +237,6 @@ param(
 - 缺少旧整包、插件项目或构建产物时立即失败。
 - 每次发布都清空 staging 后重新展开旧整包。
 - 自动构建插件并覆盖 `.dll`、`.deps.json`、`.pdb`。
-- 自动复制本仓库的 `README.md`、`Commands.txt`、`cfg/`、`addons/counterstrikesharp/configs/`、`addons/BotHider/*.json`、`addons/metamod/*.vdf`、手雷数据和必要资源。
+- 自动复制本仓库的 `README.md`、`Commands.txt`、`cfg/`、`addons/counterstrikesharp/configs/`、`addons/BotHider/*.json`、手雷数据和必要资源；BotVision 仅由显式测试开关复制。
 - 自动重建 override VPK。
 - 压缩后打印 staging 路径、zip 路径、文件大小和 SHA256。
