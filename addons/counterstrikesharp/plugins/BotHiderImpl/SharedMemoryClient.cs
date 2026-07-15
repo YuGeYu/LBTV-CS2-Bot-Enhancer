@@ -27,11 +27,13 @@ public sealed class SharedMemoryClient : IBotHiderApi, IDisposable
     private const int OffCurrentPing = 5720;  // int32[64]
     private const int OffCrosshair = 5976;  // char[64][64]
     private const int CrosshairLen = 64;
+    // Signature/hook status region
     private const int OffSigCount = 10072;  // uint32
     private const int OffSigEntries = 10080;  // SigEntry[8]
     private const int SigNameLen = 32;
     private const int SigEntrySize = 40;  // char[32] + uint64
     private const int MaxSigs = 8;
+    // Scoreboard flair region
     private const int OffScoreboardFlair = 10400;  // uint32[64]
 
     // Command region offsets
@@ -75,12 +77,6 @@ public sealed class SharedMemoryClient : IBotHiderApi, IDisposable
         _onCrosshairCode = onCrosshairCode;
     }
 
-    public bool IsConnected()
-    {
-        if (_view != null) return true;
-        return TryConnect();
-    }
-
     // Try to open the existing mapping. Returns false if BotHider isn't loaded yet
     public bool TryConnect()
     {
@@ -104,6 +100,13 @@ public sealed class SharedMemoryClient : IBotHiderApi, IDisposable
     {
         if (_view == null) TryConnect();
         return _view != null && slot >= 0 && slot < MaxSlots;
+    }
+
+    // Returns whether the shared memory bridge is connected
+    public bool IsConnected()
+    {
+        if (_view != null) return true;
+        return TryConnect();
     }
 
     // IBotHiderApi: read side
@@ -155,6 +158,7 @@ public sealed class SharedMemoryClient : IBotHiderApi, IDisposable
         return Encoding.UTF8.GetString(buf, 0, len);
     }
 
+    // Write crosshair code to shared memory, empty or "0" to clear
     public bool SetCrosshairCode(int slot, string code)
     {
         if (!Valid(slot)) return false;
@@ -170,6 +174,7 @@ public sealed class SharedMemoryClient : IBotHiderApi, IDisposable
         return true;
     }
 
+    // Returns the assigned or newly randomized scoreboard flair
     public uint GetScoreboardFlair(int slot)
     {
         if (!IsManagedBot(slot)) return 0U;
@@ -181,6 +186,7 @@ public sealed class SharedMemoryClient : IBotHiderApi, IDisposable
         return _scoreboardFlairs[slot];
     }
 
+    // Read the resolved hook/signature status table
     public (string Name, ulong Addr)[] GetSignatures()
     {
         if (_view == null) TryConnect();
@@ -215,12 +221,14 @@ public sealed class SharedMemoryClient : IBotHiderApi, IDisposable
     public bool SetPersonaName(int slot, string name)
     {
         if (!Valid(slot) || string.IsNullOrEmpty(name)) return false;
+        // Update both the engine-side persona and the visible PlayerName.
         _personaNameOverrides[slot] = name;
         bool ok = PostCommand(CmdSetPersona, slot, 0UL, name);
         if (ok) _onVisibleName?.Invoke(slot, name);
         return ok;
     }
 
+    // Overrides the C#-side scoreboard flair for a managed bot
     public bool SetScoreboardFlair(int slot, uint itemDefIndex)
     {
         if (!IsManagedBot(slot) || itemDefIndex > ushort.MaxValue) return false;
@@ -279,6 +287,7 @@ public sealed class SharedMemoryClient : IBotHiderApi, IDisposable
         return true;
     }
 
+    // Drops local flair state when C++ releases a slot
     private void ClearReleasedScoreboardFlairs(bool[] managed)
     {
         for (int slot = 0; slot < MaxSlots; slot++)

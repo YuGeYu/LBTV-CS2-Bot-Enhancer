@@ -74,7 +74,6 @@ public class BotHiderImplPlugin : BasePlugin
     }
 
     // Round start — respawn managed bots that ended the prior round dead.
-    // bot dead at match end is not auto-respawned by the engine on the new match; pull it back in here.
     [GameEventHandler]
     public HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
     {
@@ -83,6 +82,7 @@ public class BotHiderImplPlugin : BasePlugin
         return HookResult.Continue;
     }
 
+    // Player connect full — start early retries while controllers settle
     [GameEventHandler]
     public HookResult OnPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)
     {
@@ -90,6 +90,7 @@ public class BotHiderImplPlugin : BasePlugin
         return HookResult.Continue;
     }
 
+    // Player spawn — retry visible fields during freeze time
     [GameEventHandler]
     public HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
     {
@@ -174,6 +175,7 @@ public class BotHiderImplPlugin : BasePlugin
         });
     }
 
+    // Write CCSPlayerController.m_szCrosshairCodes
     private static void ApplyVisibleCrosshair(int slot, string code)
     {
         Server.NextFrame(() =>
@@ -192,6 +194,7 @@ public class BotHiderImplPlugin : BasePlugin
         });
     }
 
+    // Write CCSPlayerController_InventoryServices.m_rank
     private void ApplyVisibleScoreboardFlair(int slot, uint itemDefIndex)
     {
         Server.NextFrame(() =>
@@ -201,6 +204,7 @@ public class BotHiderImplPlugin : BasePlugin
         });
     }
 
+    // Opens a short high-frequency apply window for early-round fields
     private void StartFastApplyWindow()
     {
         _fastApplyRemaining = Math.Max(_fastApplyRemaining, 80);
@@ -208,6 +212,7 @@ public class BotHiderImplPlugin : BasePlugin
         _fastApplyTimer = AddTimer(0.25f, RunFastApplyTick, TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
     }
 
+    // Runs one early apply retry tick
     private void RunFastApplyTick()
     {
         ApplyManagedSlots();
@@ -217,6 +222,7 @@ public class BotHiderImplPlugin : BasePlugin
         _fastApplyTimer = null;
     }
 
+    // Timer body
     private void ApplyManagedSlots()
     {
         if (_client == null) return;
@@ -242,6 +248,7 @@ public class BotHiderImplPlugin : BasePlugin
             {
                 try
                 {
+                    // m_iPing not networked: write the field only, no SetStateChanged
                     Schema.SetSchemaValue(player.Handle, "CCSPlayerController", "m_iPing", ping);
                 }
                 catch (Exception e)
@@ -255,6 +262,7 @@ public class BotHiderImplPlugin : BasePlugin
             {
                 try
                 {
+                    // Publish the crosshair code through the controller network state.
                     player.CrosshairCodes = cross;
                     Utilities.SetStateChanged(player, "CCSPlayerController", "m_szCrosshairCodes");
                     _appliedCrosshair[slot] = cross;
@@ -274,12 +282,15 @@ public class BotHiderImplPlugin : BasePlugin
         }
     }
 
+    // This project uses bot_info.json identities. Queue the source selection as
+    // soon as the native shared-memory bridge is ready, before bots are created.
     private void EnsureBotInfoNameSource()
     {
         if (_client == null || _botInfoNameSourceQueued) return;
         _botInfoNameSourceQueued = _client.SetNameSource(true);
     }
 
+    // Apply the scoreboard flair rank span for one player
     private static bool TryApplyScoreboardFlair(int slot, uint itemDefIndex)
     {
         var player = Utilities.GetPlayerFromSlot(slot);
@@ -302,6 +313,7 @@ public class BotHiderImplPlugin : BasePlugin
         }
     }
 
+    // Writes one rank entry and marks that offset dirty
     private static void SetScoreboardFlairRank(CCSPlayerController player, Span<MedalRank_t> ranks,
                                                int index, uint itemDefIndex)
     {
@@ -313,6 +325,7 @@ public class BotHiderImplPlugin : BasePlugin
             index * sizeof(uint));
     }
 
+    // Calls SetStateChanged while tolerating schema differences
     private static void TrySetScoreboardStateChanged(CBaseEntity entity, string className,
                                                      string fieldName, int extraOffset = 0)
     {
@@ -322,7 +335,7 @@ public class BotHiderImplPlugin : BasePlugin
         }
         catch
         {
-            // Scoreboard schema fields vary across game and CSS builds.
+            // Scoreboard fields vary across game/CSS builds
         }
     }
 
@@ -331,6 +344,7 @@ public class BotHiderImplPlugin : BasePlugin
     public void OnStatus(CCSPlayerController? player, CommandInfo cmd)
     {
         if (_client == null) { cmd.ReplyToCommand("[BotHider] not initialized"); return; }
+        // Hook/sig resolution line: ok only if every signature resolved
         var sigs = _client.GetSignatures();
         if (sigs.Length > 0)
         {
@@ -375,6 +389,7 @@ public class BotHiderImplPlugin : BasePlugin
         cmd.ReplyToCommand($"[BotHider] SetPersonaName({slot},'{name}') -> {ok}");
     }
 
+    // bh_setflair <slot> <item_def_index> — set a bot's scoreboard flair
     [ConsoleCommand("bh_setflair", "Set a bot's scoreboard flair: bh_setflair <slot> <item_def_index>")]
     public void OnSetFlair(CCSPlayerController? player, CommandInfo cmd)
     {
@@ -386,6 +401,7 @@ public class BotHiderImplPlugin : BasePlugin
         cmd.ReplyToCommand($"[BotHider] SetScoreboardFlair({slot},{itemDefIndex}) -> {ok}");
     }
 
+    // bh_setcrosshair <slot> <code> - set a bot's crosshair code
     [ConsoleCommand("bh_setcrosshair", "Set a bot's crosshair: bh_setcrosshair <slot> <code>")]
     public void OnSetCrosshair(CCSPlayerController? player, CommandInfo cmd)
     {
@@ -431,19 +447,49 @@ internal sealed class BotHiderCapabilityApi : IBotHiderApi
         _client = client;
     }
 
+    // Returns whether the slot is managed by BotHider.
     public bool IsManagedBot(int slot) => _client.IsManagedBot(slot);
+
+    // Returns the current synthetic SteamID64 for the slot.
     public ulong GetBotSteamId(int slot) => _client.GetBotSteamId(slot);
+
+    // Returns all managed engine slots.
     public int[] GetManagedSlots() => _client.GetManagedSlots();
+
+    // Returns the current persona name for the slot.
     public string GetPersonaName(int slot) => _client.GetPersonaName(slot);
+
+    // Returns the current visible ping for the slot.
     public int GetPing(int slot) => _client.GetPing(slot);
+
+    // Returns the current crosshair code for the slot.
     public string GetCrosshairCode(int slot) => _client.GetCrosshairCode(slot);
+
+    // Returns the current scoreboard flair item definition index
     public uint GetScoreboardFlair(int slot) => _client.GetScoreboardFlair(slot);
+
+    // Returns the resolved signature table.
     public (string Name, ulong Addr)[] GetSignatures() => _client.GetSignatures();
-    public bool SetBotSteamId(int slot, ulong steamId64) => _client.SetBotSteamId(slot, steamId64);
-    public bool SetCrosshairCode(int slot, string code) => _client.SetCrosshairCode(slot, code);
-    public bool SetPersonaName(int slot, string name) => _client.SetPersonaName(slot, name);
+
+    // Updates the synthetic SteamID64 for a managed bot.
+    public bool SetBotSteamId(int slot, ulong steamId64) =>
+        _client.SetBotSteamId(slot, steamId64);
+
+    // Updates the visible PlayerName through the existing callback path.
+    public bool SetPersonaName(int slot, string name) =>
+        _client.SetPersonaName(slot, name);
+
+    // Updates the visible scoreboard flair through the C# rank writer
     public bool SetScoreboardFlair(int slot, uint itemDefIndex) =>
         _client.SetScoreboardFlair(slot, itemDefIndex);
+
+    // Set crosshair code for a managed bot, empty or "0" to clear
+    public bool SetCrosshairCode(int slot, string code) =>
+        _client.SetCrosshairCode(slot, code);
+
+    // Toggles the global disguise behavior.
     public bool SetDisguise(bool enabled) => _client.SetDisguise(enabled);
+
+    // Toggles the global display-name source behavior.
     public bool SetNameSource(bool useBotInfo) => _client.SetNameSource(useBotInfo);
 }

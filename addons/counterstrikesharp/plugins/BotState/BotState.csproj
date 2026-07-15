@@ -21,10 +21,11 @@
   <ItemGroup>
     <!-- Build-time only: RayTraceApi.dll is provided by the server at runtime
          (addons/counterstrikesharp/shared/RayTraceApi/RayTraceApi.dll). -->
-    <Reference Include="RayTraceApi">
-      <HintPath>libs/RayTraceApi.dll</HintPath>
+    <ProjectReference Include="Ray-Trace\managed\RayTrace\RayTraceApi\RayTraceApi.csproj">
       <Private>false</Private>
-    </Reference>
+      <ExcludeAssets>runtime</ExcludeAssets>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
 
   <!-- RayTraceApi.dll is provided by the server (shared/ directory).

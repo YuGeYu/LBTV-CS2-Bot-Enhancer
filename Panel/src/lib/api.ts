@@ -20,10 +20,42 @@ export function isAppError(e: unknown): e is AppError {
 /** Normalize any thrown value into an AppError so the UI always has a code. */
 export function toAppError(e: unknown): AppError {
   if (isAppError(e)) return e;
+
+  if (typeof e === "string") {
+    try {
+      const parsed: unknown = JSON.parse(e);
+      if (isAppError(parsed)) return parsed;
+    } catch {
+      // Plain strings are valid Tauri rejection details.
+    }
+    return { code: "E1099", category: "internal", detail: e || "Unknown error" };
+  }
+
+  if (e instanceof Error) {
+    return {
+      code: "E1099",
+      category: "internal",
+      detail: `${e.name}: ${e.message}`,
+    };
+  }
+
+  if (typeof e === "object" && e !== null && "message" in e) {
+    const message = (e as { message?: unknown }).message;
+    if (typeof message === "string") {
+      return { code: "E1099", category: "internal", detail: message };
+    }
+  }
+
+  let detail = "Unknown error";
+  try {
+    detail = JSON.stringify(e) || String(e);
+  } catch {
+    detail = String(e);
+  }
   return {
     code: "E1099",
     category: "internal",
-    detail: typeof e === "string" ? e : JSON.stringify(e),
+    detail,
   };
 }
 
@@ -41,6 +73,8 @@ export type FilesReport = {
   total: number;
   present: number;
   missing: string[];
+  /** Wrong folder the plugin was extracted into, if detected. */
+  misplaced: string | null;
 };
 
 export type DifficultyLevel = "Low" | "Medium" | "High";
@@ -80,6 +114,42 @@ export type DropKnivesState = {
   cs2_running: boolean;
 };
 
+export type KnifePreset = {
+  paint: number;
+  seed: number;
+  wear: number;
+  name_tag: string;
+  stattrak_enabled: boolean;
+  stattrak_count: number;
+  souvenir_enabled?: boolean;
+};
+
+export type GlovePreset = {
+  enabled: boolean;
+  defindex: number;
+  paint: number;
+  seed: number;
+  wear: number;
+};
+
+export type KnifeCustomizerConfig = {
+  enabled: boolean;
+  apply_to_human_players: boolean;
+  apply_on_pickup: boolean;
+  default_knife_defindex: number;
+  presets: Record<string, KnifePreset>;
+  gun_presets?: Record<string, KnifePreset>;
+  music_kit_id?: number;
+  glove: GlovePreset;
+};
+
+export type KnifeCustomizerState = {
+  plugin_present: boolean;
+  config_present: boolean;
+  cs2_running: boolean;
+  config: KnifeCustomizerConfig;
+};
+
 export type GameMode = "online" | "bots";
 
 export type ModeInfo = {
@@ -89,6 +159,9 @@ export type ModeInfo = {
   insecure: boolean;
   user_count: number;
   cs2_running: boolean;
+  // CS2 running and the on-disk gameinfo.gi doesn't match the remembered mode
+  // (the boot-time apply was skipped) — show the mode control yellow.
+  pending: boolean;
 };
 
 export type LaunchResult = {
@@ -134,6 +207,7 @@ export const api = {
     invoke<ModeInfo>("set_mode", { csgo, mode }),
   reconcileLaunchOptions: () => invoke<number>("reconcile_launch_options"),
   launchCs2: () => invoke<LaunchResult>("launch_cs2"),
+  reconcileCoreJson: (csgo: string) => invoke<void>("reconcile_core_json", { csgo }),
   getBotItems: (csgo: string) => invoke<BotItemsState>("get_bot_items", { csgo }),
   setBotItem: (csgo: string, item: BotItemKey, on: boolean) =>
     invoke<BotItemsState>("set_bot_item", { csgo, item, on }),
@@ -146,4 +220,8 @@ export const api = {
     invoke<DropKnivesState>("get_drop_knives", { csgo }),
   setDropKnives: (csgo: string, bindKey: string, selected: number[]) =>
     invoke<DropKnivesState>("set_drop_knives", { csgo, bindKey, selected }),
+  getKnifeCustomizer: (csgo: string) =>
+    invoke<KnifeCustomizerState>("get_knife_customizer", { csgo }),
+  saveKnifeCustomizer: (csgo: string, config: KnifeCustomizerConfig) =>
+    invoke<KnifeCustomizerState>("save_knife_customizer", { csgo, config }),
 };

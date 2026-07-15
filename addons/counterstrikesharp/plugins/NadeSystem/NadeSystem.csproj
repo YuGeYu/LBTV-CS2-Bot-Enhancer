@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -7,19 +7,14 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RayTraceApiPath Condition="'$(RayTraceApiPath)' == ''">$(MSBuildProjectDirectory)\libs\RayTraceApi.dll</RayTraceApiPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CounterStrikeSharp.API" Version="1.0.371" />
     <Reference Include="RayTraceApi">
       <HintPath>$(RayTraceApiPath)</HintPath>
-      <Private>false</Private>
     </Reference>
   </ItemGroup>
-
-  <Target Name="ValidateRayTraceApiPath" BeforeTargets="ResolveReferences"
-          Condition="'$(RayTraceApiPath)' == '' or !Exists('$(RayTraceApiPath)')">
-    <Error Text="RayTraceApiPath must point to the verified RayTrace 1.0.16 RayTraceApi.dll." />
-  </Target>
 
 </Project>

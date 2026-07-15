@@ -29,12 +29,6 @@ public class BotAI : BasePlugin
         "Improve and fix bots' behavior comprehensively";
 
     private readonly List<PatchInfo> _appliedPatches = [];
-    private static readonly HashSet<string> DisabledWindowsPatches =
-    [
-        "AttackState_DodgeChance100_Always",
-        "AttackState_RetreatOnSniper_Disable",
-        "OnBombPlanted_AllBotsLearnSite"
-    ];
     private readonly bool _isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
     private readonly Dictionary<string, (string signature, string patch, string expectedOriginal, int patchOffset)>
@@ -732,14 +726,7 @@ public class BotAI : BasePlugin
         Logger.LogInformation("Bot AI Patches loading...");
         var patchDefinitions = _isLinux ? _patchDefinitionsLinux : _patchDefinitions;
 
-        var activePatchNames = patchDefinitions.Keys
-            .Where(name => _isLinux || !DisabledWindowsPatches.Contains(name))
-            .ToArray();
-
-        if (!_isLinux)
-            Logger.LogWarning($"Disabled {DisabledWindowsPatches.Count} stale Windows patches: {string.Join(", ", DisabledWindowsPatches)}");
-
-        foreach (var name in activePatchNames)
+        foreach (var name in patchDefinitions.Keys)
         {
             if (ApplyPatch(name, _isLinux)) Logger.LogInformation($"{name}: applied.");
             else                            Logger.LogError($"{name}: FAILED.");
@@ -766,7 +753,7 @@ public class BotAI : BasePlugin
             return HookResult.Continue;
         });
 
-        Logger.LogInformation($"Applied {_appliedPatches.Count}/{activePatchNames.Length} active patches.");
+        Logger.LogInformation($"Applied {_appliedPatches.Count}/{patchDefinitions.Count} patches.");
     }
 
     public override void Unload(bool hotReload)

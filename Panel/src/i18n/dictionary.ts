@@ -8,24 +8,95 @@ export const DICTS: Record<string, Partial18n> = {
   english: EN,
 
   schinese: {
+    "nav.overview": "概览", "nav.workspace": "工作区",
+    "overview.tutorialEyebrow": "使用指南", "overview.tutorialTitle": "安装与使用教程",
+    "overview.tutorialDesc": "打开持续更新的小黑盒教程，查看安装、增强人机对局、控制台指令和联机使用方法。",
+    "overview.tutorialAction": "查看教程",
     "tb.settings": "设置", "tb.minimize": "最小化", "tb.close": "关闭",
     "st.directory": "目录", "st.files": "文件", "st.allPresent": "全部就绪",
     "st.missing": "缺失 {n} 项", "st.checking": "检查中…",
     "st.steamNotFound": "未找到 Steam", "st.notLocated": "未定位到 game/csgo",
     "st.multiple": "检测到多个安装 — 在设置中选择", "st.viewMissing": "查看缺失文件",
-    "mode.title": "模式", "mode.online": "联机模式", "mode.bot": "机器人模式",
-    "mode.launch": "启动 CS2", "mode.launching": "正在启动 CS2…",
+    "mode.title": "模式", "mode.online": "正常匹配（安全）", "mode.bot": "增强人机（-insecure）",
+    "mode.launch": "启动 CS2", "mode.launchOnline": "安全启动正常匹配", "mode.launchBots": "启动增强人机", "mode.launching": "正在启动 CS2…",
     "diff.title": "难度", "ctx.refresh": "刷新",
     "pre.title": "预设", "pre.aim": "瞄准", "pre.nades": "投掷物", "pre.teams": "战队",
     "pre.dropKnives": "掉落刀具", "pre.team": "战队", "pre.copy": "复制", "pre.bind": "绑定键",
     "pre.pressKey": "请按下一个键…",
+    "live.wear": "磨损", "live.seed": "模板编号", "live.nameTag": "名称标签",
+    "live.stattrak": "StatTrak 计数器", "live.count": "计数器数值", "live.souvenir": "纪念品",
+    "cosmetics.knifeTitle": "刀具预设", "cosmetics.gloveTitle": "玩家手套预设",
+    "cosmetics.chooseSkin": "请选择皮肤", "cosmetics.chooseGlove": "请选择手套", "cosmetics.paintKit": "涂装编号",
+    "cosmetics.searchSkin": "搜索皮肤名称或 Paint Kit", "cosmetics.searchGlove": "搜索手套样式、皮肤或 Paint Kit",
+    "cosmetics.save": "应用并保存", "cosmetics.saving": "正在保存…",
+    "cosmetics.defaultKnife": "设为玩家默认刀", "cosmetics.namePlaceholder": "最多 20 个字符",
+    "cosmetics.initialCount": "初始计数", "cosmetics.enableGlove": "启用玩家手套",
+    "cosmetics.gloveStyle": "手套样式与皮肤", "cosmetics.leftRight": "左键选择，右键配置",
+    "cosmetics.gloveLeftRight": "左键启用，右键配置玩家手套", "cosmetics.playerGloves": "玩家手套",
+    "cosmetics.enabled": "已启用", "cosmetics.disabled": "未启用", "cosmetics.keyHint": "点击后按下一个键",
+    "phase.ruby": "红宝石", "phase.sapphire": "蓝宝石", "phase.blackPearl": "黑珍珠", "phase.emerald": "绿宝石",
+    "weapons.title": "武器预设", "weapons.search": "搜索皮肤名称或 Paint Kit",
+    "weapons.paint": "皮肤", "weapons.configured": "已配置", "weapons.unconfigured": "未配置",
+    "weapons.apply": "保存预设", "weapons.saving": "正在保存…", "weapons.remove": "清除预设", "weapons.noSkins": "没有兼容皮肤",
+    "music.title": "音乐盒预设", "music.default": "使用 Steam 当前音乐盒", "music.search": "搜索音乐盒",
+    "music.configured": "将应用到玩家", "music.select": "选择音乐盒", "music.apply": "保存音乐盒",
+    "music.remove": "恢复 Steam 默认", "music.saving": "正在保存…", "music.noResults": "没有匹配的音乐盒",
     "bi.title": "机器人物品", "bi.skins": "皮肤", "bi.profiles": "档案", "bi.agents": "探员", "bi.music": "音乐盒",
     "cmd.title": "指令", "cmd.search": "搜索…",
+    "cmd.searchCommands": "搜索指令", "cmd.searchTeams": "搜索战队、选手或指令",
+    "cmd.categories": "指令分类", "cmd.tab.common": "常用", "cmd.tab.bots": "机器人",
+    "cmd.tab.teams": "战队", "cmd.tab.buy": "协同购买", "cmd.tab.multiplayer": "联机",
+    "cmd.noResults": "没有匹配的指令",
     "cmd.h.gameMode": "游戏模式", "cmd.h.connection": "连接",
     "cmd.h.aimStyle": "机器人瞄准方式", "cmd.h.nadeThrowing": "机器人投掷",
     "cmd.h.addTeams": "添加战队", "cmd.h.coordinatedBuy": "协同购买",
+    "cmd.desc.gameMode": "切换增强人机练习对局使用的游戏规则。",
+    "cmd.desc.connection": "查看当前本地服务器和连接信息。",
+    "cmd.desc.aimStyle": "选择增强人机的瞄准目标分布方式。",
+    "cmd.desc.nadeThrowing": "设置增强人机使用投掷物的频率。",
+    "cmd.desc.botManagement": "在当前练习对局中添加、移除机器人或重启对局。",
+    "cmd.desc.coordinatedBuy": "让机器人队伍围绕指定武器协同购买。",
+    "cmd.detail.scoutsOn": "进入一场对局后开启跳狙飞人模式；使用低重力、连跳和 SSG 08 规则。",
+    "cmd.detail.scoutsOff": "关闭跳狙飞人并恢复普通练习规则。",
+    "cmd.detail.status": "显示本地服务器、房间地址、SteamID、端口和连接信息。",
+    "cmd.detail.aimMixed": "人机灵活选择头部或身体瞄准点，这是默认状态。",
+    "cmd.detail.aimHead": "人机优先瞄准头部。", "cmd.detail.aimBody": "人机优先瞄准身体。",
+    "cmd.detail.nadesOff": "不让人机投掷任何道具。",
+    "cmd.detail.nadesNormal": "人机使用接近真人玩家的道具限额，这是默认状态。",
+    "cmd.detail.nadesMore": "在 normal 模式基础上提高人机的道具限额。",
+    "cmd.detail.nadesMax": "减少各种道具限制，解锁最高强度的地狱道具。",
+    "cmd.detail.kickAll": "踢出当前对局中的全部人机。",
+    "cmd.detail.kickT": "踢出一个恐怖分子阵营人机。", "cmd.detail.kickCt": "踢出一个反恐精英阵营人机。",
+    "cmd.detail.kickNamed": "把占位符替换为人机名字，踢出指定人机，例如 niko。",
+    "cmd.detail.addAuto": "向人数不足的阵营加入一个随机人机。",
+    "cmd.detail.addNamed": "把占位符替换为名字，加入指定名称的人机。",
+    "cmd.detail.addT": "加入一个随机恐怖分子人机。", "cmd.detail.addCt": "加入一个随机反恐精英人机。",
+    "cmd.detail.addTNamed": "把占位符替换为名字，将指定人机加入恐怖分子阵营。",
+    "cmd.detail.addCtNamed": "把占位符替换为名字，将指定人机加入反恐精英阵营。",
+    "cmd.detail.randomBuyOn": "让人机随机购买武器。", "cmd.detail.randomBuyOff": "关闭人机随机购买武器。",
+    "cmd.detail.quota": "显示当前人机数量上限；在后面添加数字可以修改上限。",
+    "cmd.detail.restart": "保留当前所有更改，并在一秒后重新开始对局。",
+    "cmd.detail.autoBuy": "清除固定武器配装，恢复增强人机的自动购买逻辑。",
+    "cmd.detail.pistolLoadout": "将人机固定为 {weapon}、护甲、头盔和拆弹器配装。",
+    "cmd.detail.primaryLoadout": "将人机固定为 {weapon}、Tec-9、护甲、头盔和拆弹器配装。",
+    "cmd.detail.fallback": "在 CS2 开发者控制台中执行此指令。",
+    "cmd.teamsTitle": "职业战队阵容", "cmd.teamsDesc": "选择 CT 或 T，然后点击战队卡片复制完整阵容指令。",
+    "cmd.teamCount": "共 {n} 支战队", "cmd.teamPlayers": "当前指令阵容", "cmd.copyTeam": "复制战队指令",
+    "cmd.multi.title": "和朋友一起对战增强人机",
+    "cmd.multi.subtitle": "通过三个控制台步骤，让朋友直接连接你的本地练习房间。",
+    "cmd.multi.statusTitle": "读取房间地址", "cmd.multi.statusDesc": "进入练习地图后输入，控制台会输出当前服务器信息。",
+    "cmd.multi.steamIdTitle": "找到 steamid 行", "cmd.multi.steamIdDesc": "复制 steamid 后面的完整内容；如果包含端口，也要一并复制。",
+    "cmd.multi.connectTitle": "发送连接指令", "cmd.multi.connectDesc": "用你的数值替换占位符，然后把完整指令发给朋友。",
+    "cmd.multi.note": "房主必须已经进入增强人机练习对局。朋友在自己的 CS2 控制台粘贴 connect 指令并按回车。",
     "set.title": "设置", "set.devs": "开发者", "set.languages": "语言", "set.directory": "目录",
-    "set.project": "项目", "set.browse": "浏览…",
+    "set.project": "项目", "set.repositories": "项目仓库", "set.repositoriesDesc": "Plus 增强版与官方上游项目。",
+    "set.plusRepository": "PLUS 增强版仓库", "set.upstreamRepository": "官方上游",
+    "set.plusRepositoryDesc": "包含面板、预设与 Plus 扩展功能的增强分发版本。",
+    "set.upstreamRepositoryDesc": "原版 CS2-Bot-Improver 项目，也是机器人行为的功能基础。",
+    "set.contributors": "贡献者", "set.contributorsDesc": "GitHub 返回的仓库维护者与贡献者。",
+    "set.role.plusMaintainer": "Plus 维护者", "set.role.upstreamAuthor": "上游作者",
+    "set.role.contributor": "贡献者", "set.contributionCount": "{n} 次提交",
+    "set.browse": "浏览…",
     "set.steamNotDetected": "未检测到 Steam。请使用浏览定位 game/csgo。",
     "set.noCsgo": "未检测到 game/csgo 目录。",
     "common.ok": "确定", "common.copied": "已复制", "common.copyFailed": "复制失败",
@@ -38,27 +109,101 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "文件操作失败，请确认 CS2 已关闭后重试。",
     "errcat.config": "无法保存设置。",
     "errcat.internal": "发生意外错误。",
+    "errcat.filesystem": "文件操作失败，请确认 CS2 已关闭后重试。",
+    "errcat.validation": "当前设置或游戏状态无效。",
+    "st.wrongLocation": "文件放错文件夹了 — 请移动到 game\\csgo", "cmd.h.botManagement": "机器人管理", "cmd.hint.botName": "机器人名称", "cmd.hint.number": "数量",
   },
 
   tchinese: {
+    "nav.overview": "總覽", "nav.workspace": "工作區",
+    "overview.tutorialEyebrow": "使用指南", "overview.tutorialTitle": "安裝與使用教學",
+    "overview.tutorialDesc": "開啟持續更新的小黑盒教學，查看安裝、強化電腦人對局、控制台指令與連線使用方式。",
+    "overview.tutorialAction": "查看教學",
     "tb.settings": "設定", "tb.minimize": "最小化", "tb.close": "關閉",
     "st.directory": "目錄", "st.files": "檔案", "st.allPresent": "全部就緒",
     "st.missing": "缺少 {n} 項", "st.checking": "檢查中…",
     "st.steamNotFound": "找不到 Steam", "st.notLocated": "未定位到 game/csgo",
     "st.multiple": "偵測到多個安裝 — 請在設定中選擇", "st.viewMissing": "檢視缺少檔案",
-    "mode.title": "模式", "mode.online": "連線模式", "mode.bot": "電腦人模式",
-    "mode.launch": "啟動 CS2", "mode.launching": "正在啟動 CS2…",
+    "mode.title": "模式", "mode.online": "正常配對（安全）", "mode.bot": "強化電腦人（-insecure）",
+    "mode.launch": "啟動 CS2", "mode.launchOnline": "安全啟動正常配對", "mode.launchBots": "啟動強化電腦人", "mode.launching": "正在啟動 CS2…",
     "diff.title": "難度", "ctx.refresh": "重新整理",
     "pre.title": "預設", "pre.aim": "瞄準", "pre.nades": "投擲物", "pre.teams": "戰隊",
     "pre.dropKnives": "掉落刀具", "pre.team": "戰隊", "pre.copy": "複製", "pre.bind": "綁定鍵",
     "pre.pressKey": "請按下一個鍵…",
+    "live.wear": "磨損", "live.seed": "模板編號", "live.nameTag": "名稱標籤",
+    "live.stattrak": "StatTrak 計數器", "live.count": "計數器數值", "live.souvenir": "紀念品",
+    "cosmetics.knifeTitle": "刀具預設", "cosmetics.gloveTitle": "玩家手套預設",
+    "cosmetics.chooseSkin": "請選擇外觀", "cosmetics.chooseGlove": "請選擇手套", "cosmetics.paintKit": "塗裝編號",
+    "cosmetics.searchSkin": "搜尋外觀名稱或 Paint Kit", "cosmetics.searchGlove": "搜尋手套樣式、外觀或 Paint Kit",
+    "cosmetics.save": "套用並儲存", "cosmetics.saving": "正在儲存…",
+    "cosmetics.defaultKnife": "設為玩家預設刀具", "cosmetics.namePlaceholder": "最多 20 個字元",
+    "cosmetics.initialCount": "初始計數", "cosmetics.enableGlove": "啟用玩家手套",
+    "cosmetics.gloveStyle": "手套樣式與外觀", "cosmetics.leftRight": "左鍵選擇，右鍵設定",
+    "cosmetics.gloveLeftRight": "左鍵啟用，右鍵設定玩家手套", "cosmetics.playerGloves": "玩家手套",
+    "cosmetics.enabled": "已啟用", "cosmetics.disabled": "未啟用", "cosmetics.keyHint": "點擊後按下一個鍵",
+    "phase.ruby": "紅寶石", "phase.sapphire": "藍寶石", "phase.blackPearl": "黑珍珠", "phase.emerald": "綠寶石",
+    "weapons.title": "武器預設", "weapons.search": "搜尋外觀名稱或 Paint Kit",
+    "weapons.paint": "外觀", "weapons.configured": "已設定", "weapons.unconfigured": "未設定",
+    "weapons.apply": "儲存預設", "weapons.saving": "正在儲存…", "weapons.remove": "清除預設", "weapons.noSkins": "沒有相容外觀",
+    "music.title": "音樂盒預設", "music.default": "使用 Steam 目前音樂盒", "music.search": "搜尋音樂盒",
+    "music.configured": "將套用至玩家", "music.select": "選擇音樂盒", "music.apply": "儲存音樂盒",
+    "music.remove": "恢復 Steam 預設", "music.saving": "正在儲存…", "music.noResults": "沒有符合的音樂盒",
     "bi.title": "電腦人物品", "bi.skins": "外觀", "bi.profiles": "檔案", "bi.agents": "探員", "bi.music": "音樂盒",
     "cmd.title": "指令", "cmd.search": "搜尋…",
+    "cmd.searchCommands": "搜尋指令", "cmd.searchTeams": "搜尋戰隊、選手或指令",
+    "cmd.categories": "指令分類", "cmd.tab.common": "常用", "cmd.tab.bots": "電腦人",
+    "cmd.tab.teams": "戰隊", "cmd.tab.buy": "協同購買", "cmd.tab.multiplayer": "連線",
+    "cmd.noResults": "沒有符合的指令",
     "cmd.h.gameMode": "遊戲模式", "cmd.h.connection": "連線",
     "cmd.h.aimStyle": "電腦人瞄準方式", "cmd.h.nadeThrowing": "電腦人投擲",
     "cmd.h.addTeams": "新增戰隊", "cmd.h.coordinatedBuy": "協同購買",
+    "cmd.desc.gameMode": "切換強化電腦人練習對局使用的遊戲規則。",
+    "cmd.desc.connection": "檢視目前本機伺服器與連線資訊。",
+    "cmd.desc.aimStyle": "選擇強化電腦人的瞄準目標分布方式。",
+    "cmd.desc.nadeThrowing": "設定強化電腦人使用投擲物的頻率。",
+    "cmd.desc.botManagement": "在目前練習對局中新增、移除電腦人或重新開始對局。",
+    "cmd.desc.coordinatedBuy": "讓電腦人隊伍圍繞指定武器協同購買。",
+    "cmd.detail.scoutsOn": "進入一場對局後開啟跳狙飛人模式；使用低重力、連跳與 SSG 08 規則。",
+    "cmd.detail.scoutsOff": "關閉跳狙飛人並恢復一般練習規則。",
+    "cmd.detail.status": "顯示本機伺服器、房間位址、SteamID、連接埠與連線資訊。",
+    "cmd.detail.aimMixed": "電腦人靈活選擇頭部或身體瞄準點，這是預設狀態。",
+    "cmd.detail.aimHead": "電腦人優先瞄準頭部。", "cmd.detail.aimBody": "電腦人優先瞄準身體。",
+    "cmd.detail.nadesOff": "不讓電腦人投擲任何道具。",
+    "cmd.detail.nadesNormal": "電腦人使用接近真人玩家的道具限額，這是預設狀態。",
+    "cmd.detail.nadesMore": "在 normal 模式基礎上提高電腦人的道具限額。",
+    "cmd.detail.nadesMax": "減少各種道具限制，解鎖最高強度的地獄道具。",
+    "cmd.detail.kickAll": "踢出目前對局中的全部電腦人。",
+    "cmd.detail.kickT": "踢出一個恐怖分子陣營電腦人。", "cmd.detail.kickCt": "踢出一個反恐精英陣營電腦人。",
+    "cmd.detail.kickNamed": "將預留位置替換為電腦人名稱，踢出指定電腦人，例如 niko。",
+    "cmd.detail.addAuto": "向人數不足的陣營加入一個隨機電腦人。",
+    "cmd.detail.addNamed": "將預留位置替換為名稱，加入指定名稱的電腦人。",
+    "cmd.detail.addT": "加入一個隨機恐怖分子電腦人。", "cmd.detail.addCt": "加入一個隨機反恐精英電腦人。",
+    "cmd.detail.addTNamed": "將預留位置替換為名稱，把指定電腦人加入恐怖分子陣營。",
+    "cmd.detail.addCtNamed": "將預留位置替換為名稱，把指定電腦人加入反恐精英陣營。",
+    "cmd.detail.randomBuyOn": "讓電腦人隨機購買武器。", "cmd.detail.randomBuyOff": "關閉電腦人隨機購買武器。",
+    "cmd.detail.quota": "顯示目前電腦人數量上限；在後面加上數字即可修改上限。",
+    "cmd.detail.restart": "保留目前所有變更，並在一秒後重新開始對局。",
+    "cmd.detail.autoBuy": "清除固定武器配置，恢復強化電腦人的自動購買邏輯。",
+    "cmd.detail.pistolLoadout": "將電腦人固定為 {weapon}、護甲、頭盔與拆彈器配置。",
+    "cmd.detail.primaryLoadout": "將電腦人固定為 {weapon}、Tec-9、護甲、頭盔與拆彈器配置。",
+    "cmd.detail.fallback": "在 CS2 開發者控制台中執行此指令。",
+    "cmd.teamsTitle": "職業戰隊陣容", "cmd.teamsDesc": "選擇 CT 或 T，然後點擊戰隊卡片複製完整陣容指令。",
+    "cmd.teamCount": "共 {n} 支戰隊", "cmd.teamPlayers": "目前指令陣容", "cmd.copyTeam": "複製戰隊指令",
+    "cmd.multi.title": "和朋友一起對戰強化電腦人",
+    "cmd.multi.subtitle": "透過三個控制台步驟，讓朋友直接連線你的本機練習房間。",
+    "cmd.multi.statusTitle": "讀取房間位址", "cmd.multi.statusDesc": "進入練習地圖後輸入，控制台會輸出目前伺服器資訊。",
+    "cmd.multi.steamIdTitle": "找到 steamid 行", "cmd.multi.steamIdDesc": "複製 steamid 後面的完整內容；若包含連接埠也要一併複製。",
+    "cmd.multi.connectTitle": "傳送連線指令", "cmd.multi.connectDesc": "用你的數值取代預留位置，再將完整指令傳給朋友。",
+    "cmd.multi.note": "房主必須已進入強化電腦人練習對局。朋友在自己的 CS2 控制台貼上 connect 指令並按 Enter。",
     "set.title": "設定", "set.devs": "開發者", "set.languages": "語言", "set.directory": "目錄",
-    "set.project": "專案", "set.browse": "瀏覽…",
+    "set.project": "專案", "set.repositories": "專案倉庫", "set.repositoriesDesc": "Plus 強化版與官方上游專案。",
+    "set.plusRepository": "PLUS 強化版倉庫", "set.upstreamRepository": "官方上游",
+    "set.plusRepositoryDesc": "包含面板、預設與 Plus 擴充功能的強化發行版本。",
+    "set.upstreamRepositoryDesc": "原版 CS2-Bot-Improver 專案，也是電腦人行為的功能基礎。",
+    "set.contributors": "貢獻者", "set.contributorsDesc": "GitHub 回傳的倉庫維護者與貢獻者。",
+    "set.role.plusMaintainer": "Plus 維護者", "set.role.upstreamAuthor": "上游作者",
+    "set.role.contributor": "貢獻者", "set.contributionCount": "{n} 次提交",
+    "set.browse": "瀏覽…",
     "set.steamNotDetected": "未偵測到 Steam。請使用瀏覽定位 game/csgo。",
     "set.noCsgo": "未偵測到 game/csgo 目錄。",
     "common.ok": "確定", "common.copied": "已複製", "common.copyFailed": "複製失敗",
@@ -71,6 +216,9 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "檔案操作失敗，請確認 CS2 已關閉後再試。",
     "errcat.config": "無法儲存設定。",
     "errcat.internal": "發生未預期的錯誤。",
+    "errcat.filesystem": "檔案操作失敗，請確認 CS2 已關閉後再試。",
+    "errcat.validation": "目前設定或遊戲狀態無效。",
+    "st.wrongLocation": "檔案放錯資料夾了 — 請移動到 game\\csgo", "cmd.h.botManagement": "電腦人管理", "cmd.hint.botName": "電腦人名稱", "cmd.hint.number": "數量",
   },
 
   japanese: {
@@ -104,6 +252,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "ファイル操作に失敗しました。CS2 を終了してから再試行してください。",
     "errcat.config": "設定を保存できませんでした。",
     "errcat.internal": "予期しないエラーが発生しました。",
+    "st.wrongLocation": "ファイルが間違ったフォルダーにあります — game\\csgo に移動してください", "cmd.h.botManagement": "ボット管理", "cmd.hint.botName": "ボット名", "cmd.hint.number": "数値",
   },
 
   koreana: {
@@ -137,6 +286,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "파일 작업에 실패했습니다. CS2를 종료한 후 다시 시도하세요.",
     "errcat.config": "설정을 저장할 수 없습니다.",
     "errcat.internal": "예기치 않은 오류가 발생했습니다.",
+    "st.wrongLocation": "파일이 잘못된 폴더에 있습니다 — game\\csgo 로 옮기세요", "cmd.h.botManagement": "봇 관리", "cmd.hint.botName": "봇 이름", "cmd.hint.number": "숫자",
   },
 
   french: {
@@ -170,6 +320,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Une opération sur un fichier a échoué. Assurez-vous que CS2 est fermé et réessayez.",
     "errcat.config": "Les paramètres n'ont pas pu être enregistrés.",
     "errcat.internal": "Une erreur inattendue s'est produite.",
+    "st.wrongLocation": "Fichiers dans le mauvais dossier — déplacez-les dans game\\csgo", "cmd.h.botManagement": "GESTION DES BOTS", "cmd.hint.botName": "nom du bot", "cmd.hint.number": "nombre",
   },
 
   german: {
@@ -203,6 +354,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Ein Dateivorgang ist fehlgeschlagen. Stellen Sie sicher, dass CS2 geschlossen ist, und versuchen Sie es erneut.",
     "errcat.config": "Die Einstellungen konnten nicht gespeichert werden.",
     "errcat.internal": "Ein unerwarteter Fehler ist aufgetreten.",
+    "st.wrongLocation": "Dateien im falschen Ordner — verschiebe sie nach game\\csgo", "cmd.h.botManagement": "BOT-VERWALTUNG", "cmd.hint.botName": "Botname", "cmd.hint.number": "Zahl",
   },
 
   spanish: {
@@ -236,6 +388,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Una operación de archivo falló. Asegúrate de que CS2 esté cerrado e inténtalo de nuevo.",
     "errcat.config": "No se pudieron guardar los ajustes.",
     "errcat.internal": "Ocurrió un error inesperado.",
+    "st.wrongLocation": "Archivos en la carpeta incorrecta — muévelos a game\\csgo", "cmd.h.botManagement": "GESTIÓN DE BOTS", "cmd.hint.botName": "nombre del bot", "cmd.hint.number": "número",
   },
 
   italian: {
@@ -269,6 +422,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Un'operazione su file non è riuscita. Assicurati che CS2 sia chiuso e riprova.",
     "errcat.config": "Impossibile salvare le impostazioni.",
     "errcat.internal": "Si è verificato un errore imprevisto.",
+    "st.wrongLocation": "File nella cartella sbagliata — spostali in game\\csgo", "cmd.h.botManagement": "GESTIONE BOT", "cmd.hint.botName": "nome bot", "cmd.hint.number": "numero",
   },
 
   russian: {
@@ -302,6 +456,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Не удалась операция с файлом. Убедитесь, что CS2 закрыт, и повторите попытку.",
     "errcat.config": "Не удалось сохранить настройки.",
     "errcat.internal": "Произошла непредвиденная ошибка.",
+    "st.wrongLocation": "Файлы в неправильной папке — переместите их в game\\csgo", "cmd.h.botManagement": "УПРАВЛЕНИЕ БОТАМИ", "cmd.hint.botName": "имя бота", "cmd.hint.number": "число",
   },
 
   ukrainian: {
@@ -335,6 +490,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Не вдалася операція з файлом. Переконайтеся, що CS2 закрито, і повторіть спробу.",
     "errcat.config": "Не вдалося зберегти налаштування.",
     "errcat.internal": "Сталася неочікувана помилка.",
+    "st.wrongLocation": "Файли в неправильній папці — перемістіть їх до game\\csgo", "cmd.h.botManagement": "КЕРУВАННЯ БОТАМИ", "cmd.hint.botName": "ім'я бота", "cmd.hint.number": "число",
   },
 
   polish: {
@@ -368,6 +524,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Operacja na pliku nie powiodła się. Upewnij się, że CS2 jest zamknięty, i spróbuj ponownie.",
     "errcat.config": "Nie można zapisać ustawień.",
     "errcat.internal": "Wystąpił nieoczekiwany błąd.",
+    "st.wrongLocation": "Pliki w złym folderze — przenieś je do game\\csgo", "cmd.h.botManagement": "ZARZĄDZANIE BOTAMI", "cmd.hint.botName": "nazwa bota", "cmd.hint.number": "liczba",
   },
 
   dutch: {
@@ -401,6 +558,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Een bestandsbewerking is mislukt. Zorg dat CS2 gesloten is en probeer het opnieuw.",
     "errcat.config": "De instellingen konden niet worden opgeslagen.",
     "errcat.internal": "Er is een onverwachte fout opgetreden.",
+    "st.wrongLocation": "Bestanden in de verkeerde map — verplaats ze naar game\\csgo", "cmd.h.botManagement": "BOTBEHEER", "cmd.hint.botName": "botnaam", "cmd.hint.number": "getal",
   },
 
   turkish: {
@@ -434,6 +592,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Bir dosya işlemi başarısız oldu. CS2'nin kapalı olduğundan emin olun ve tekrar deneyin.",
     "errcat.config": "Ayarlar kaydedilemedi.",
     "errcat.internal": "Beklenmeyen bir hata oluştu.",
+    "st.wrongLocation": "Dosyalar yanlış klasörde — game\\csgo içine taşıyın", "cmd.h.botManagement": "BOT YÖNETİMİ", "cmd.hint.botName": "bot adı", "cmd.hint.number": "sayı",
   },
 
   vietnamese: {
@@ -467,6 +626,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Thao tác tệp thất bại. Hãy đảm bảo CS2 đã đóng và thử lại.",
     "errcat.config": "Không thể lưu cài đặt.",
     "errcat.internal": "Đã xảy ra lỗi không mong muốn.",
+    "st.wrongLocation": "Tệp nằm sai thư mục — hãy chuyển vào game\\csgo", "cmd.h.botManagement": "QUẢN LÝ BOT", "cmd.hint.botName": "tên bot", "cmd.hint.number": "số",
   },
 
   thai: {
@@ -500,6 +660,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "การดำเนินการกับไฟล์ล้มเหลว ตรวจสอบว่าปิด CS2 แล้วและลองอีกครั้ง",
     "errcat.config": "ไม่สามารถบันทึกการตั้งค่าได้",
     "errcat.internal": "เกิดข้อผิดพลาดที่ไม่คาดคิด",
+    "st.wrongLocation": "ไฟล์อยู่ผิดโฟลเดอร์ — ย้ายไปไว้ใน game\\csgo", "cmd.h.botManagement": "การจัดการบอท", "cmd.hint.botName": "ชื่อบอท", "cmd.hint.number": "จำนวน",
   },
 
   indonesian: {
@@ -533,6 +694,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Operasi file gagal. Pastikan CS2 ditutup dan coba lagi.",
     "errcat.config": "Pengaturan tidak dapat disimpan.",
     "errcat.internal": "Terjadi kesalahan yang tidak terduga.",
+    "st.wrongLocation": "Berkas di folder yang salah — pindahkan ke game\\csgo", "cmd.h.botManagement": "MANAJEMEN BOT", "cmd.hint.botName": "nama bot", "cmd.hint.number": "angka",
   },
 
   czech: {
@@ -566,6 +728,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Operace se souborem selhala. Ujistěte se, že je CS2 zavřený, a zkuste to znovu.",
     "errcat.config": "Nastavení se nepodařilo uložit.",
     "errcat.internal": "Došlo k neočekávané chybě.",
+    "st.wrongLocation": "Soubory ve špatné složce — přesuňte je do game\\csgo", "cmd.h.botManagement": "SPRÁVA BOTŮ", "cmd.hint.botName": "jméno bota", "cmd.hint.number": "číslo",
   },
 
   swedish: {
@@ -599,6 +762,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "En filåtgärd misslyckades. Se till att CS2 är stängt och försök igen.",
     "errcat.config": "Inställningarna kunde inte sparas.",
     "errcat.internal": "Ett oväntat fel inträffade.",
+    "st.wrongLocation": "Filer i fel mapp — flytta dem till game\\csgo", "cmd.h.botManagement": "BOTHANTERING", "cmd.hint.botName": "botnamn", "cmd.hint.number": "antal",
   },
 
   danish: {
@@ -632,6 +796,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "En filhandling mislykkedes. Sørg for, at CS2 er lukket, og prøv igen.",
     "errcat.config": "Indstillingerne kunne ikke gemmes.",
     "errcat.internal": "Der opstod en uventet fejl.",
+    "st.wrongLocation": "Filer i den forkerte mappe — flyt dem til game\\csgo", "cmd.h.botManagement": "BOTHÅNDTERING", "cmd.hint.botName": "botnavn", "cmd.hint.number": "tal",
   },
 
   norwegian: {
@@ -665,6 +830,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "En filoperasjon mislyktes. Sørg for at CS2 er lukket, og prøv igjen.",
     "errcat.config": "Innstillingene kunne ikke lagres.",
     "errcat.internal": "Det oppstod en uventet feil.",
+    "st.wrongLocation": "Filer i feil mappe — flytt dem til game\\csgo", "cmd.h.botManagement": "BOTHÅNDTERING", "cmd.hint.botName": "botnavn", "cmd.hint.number": "tall",
   },
 
   finnish: {
@@ -698,6 +864,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Tiedostotoiminto epäonnistui. Varmista, että CS2 on suljettu, ja yritä uudelleen.",
     "errcat.config": "Asetuksia ei voitu tallentaa.",
     "errcat.internal": "Tapahtui odottamaton virhe.",
+    "st.wrongLocation": "Tiedostot väärässä kansiossa — siirrä ne kansioon game\\csgo", "cmd.h.botManagement": "BOTTIEN HALLINTA", "cmd.hint.botName": "botin nimi", "cmd.hint.number": "numero",
   },
 
   hungarian: {
@@ -731,6 +898,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Egy fájlművelet sikertelen volt. Győződj meg róla, hogy a CS2 be van zárva, és próbáld újra.",
     "errcat.config": "A beállításokat nem sikerült menteni.",
     "errcat.internal": "Váratlan hiba történt.",
+    "st.wrongLocation": "A fájlok rossz mappában vannak — helyezd át a game\\csgo mappába", "cmd.h.botManagement": "BOTOK KEZELÉSE", "cmd.hint.botName": "bot neve", "cmd.hint.number": "szám",
   },
 
   romanian: {
@@ -764,6 +932,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "O operațiune cu fișiere a eșuat. Asigură-te că CS2 este închis și încearcă din nou.",
     "errcat.config": "Setările nu au putut fi salvate.",
     "errcat.internal": "A apărut o eroare neașteptată.",
+    "st.wrongLocation": "Fișiere în folderul greșit — mută-le în game\\csgo", "cmd.h.botManagement": "GESTIONARE BOȚI", "cmd.hint.botName": "nume bot", "cmd.hint.number": "număr",
   },
 
   greek: {
@@ -797,6 +966,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Μια λειτουργία αρχείου απέτυχε. Βεβαιωθείτε ότι το CS2 είναι κλειστό και δοκιμάστε ξανά.",
     "errcat.config": "Δεν ήταν δυνατή η αποθήκευση των ρυθμίσεων.",
     "errcat.internal": "Παρουσιάστηκε ένα απρόσμενο σφάλμα.",
+    "st.wrongLocation": "Τα αρχεία είναι σε λάθος φάκελο — μετακινήστε τα στο game\\csgo", "cmd.h.botManagement": "ΔΙΑΧΕΙΡΙΣΗ BOT", "cmd.hint.botName": "όνομα bot", "cmd.hint.number": "αριθμός",
   },
 
   bulgarian: {
@@ -830,6 +1000,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Файлова операция е неуспешна. Уверете се, че CS2 е затворен, и опитайте отново.",
     "errcat.config": "Настройките не могат да бъдат запазени.",
     "errcat.internal": "Възникна неочаквана грешка.",
+    "st.wrongLocation": "Файловете са в грешната папка — преместете ги в game\\csgo", "cmd.h.botManagement": "УПРАВЛЕНИЕ НА БОТОВЕ", "cmd.hint.botName": "име на бот", "cmd.hint.number": "число",
   },
 
   // Portuguese (pt-PT) and Brazilian Portuguese
@@ -864,6 +1035,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Uma operação de ficheiro falhou. Certifique-se de que o CS2 está fechado e tente novamente.",
     "errcat.config": "Não foi possível guardar as definições.",
     "errcat.internal": "Ocorreu um erro inesperado.",
+    "st.wrongLocation": "Ficheiros na pasta errada — mova-os para game\\csgo", "cmd.h.botManagement": "GESTÃO DE BOTS", "cmd.hint.botName": "nome do bot", "cmd.hint.number": "número",
   },
 
   brazilian: {
@@ -897,6 +1069,7 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Uma operação de arquivo falhou. Verifique se o CS2 está fechado e tente novamente.",
     "errcat.config": "Não foi possível salvar as configurações.",
     "errcat.internal": "Ocorreu um erro inesperado.",
+    "st.wrongLocation": "Arquivos na pasta errada — mova-os para game\\csgo", "cmd.h.botManagement": "GERENCIAMENTO DE BOTS", "cmd.hint.botName": "nome do bot", "cmd.hint.number": "número",
   },
 
   // Latin-American Spanish — reuse Spanish with minor wording
@@ -931,5 +1104,6 @@ export const DICTS: Record<string, Partial18n> = {
     "errcat.io": "Una operación de archivo falló. Asegúrate de que CS2 esté cerrado e inténtalo de nuevo.",
     "errcat.config": "No se pudo guardar la configuración.",
     "errcat.internal": "Ocurrió un error inesperado.",
+    "st.wrongLocation": "Archivos en la carpeta incorrecta — muévelos a game\\csgo", "cmd.h.botManagement": "GESTIÓN DE BOTS", "cmd.hint.botName": "nombre del bot", "cmd.hint.number": "número",
   },
 };

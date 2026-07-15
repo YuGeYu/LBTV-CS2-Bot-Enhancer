@@ -14,7 +14,7 @@ namespace BotRandomizer;
 public class BotRandomizerPlugin : BasePlugin
 {
     public override string ModuleName        => "BotRandomizer";
-    public override string ModuleVersion     => "1.2.1";
+    public override string ModuleVersion     => "1.2.3";
     public override string ModuleAuthor      => "ed0ard & Misaka17032";
     public override string ModuleDescription => "Randomize knives, gloves, weapon skins, agent models, music kits for bots";
 
@@ -403,7 +403,7 @@ public class BotRandomizerPlugin : BasePlugin
 
         ReplaceKnife(pawn, knifeDefIndex, knifePaintKit);
         ApplyGloves(player, pawn, gloveDefIndex, glovePaintKit);
-        ApplyWeaponSkins(player.Slot, pawn);
+        // Guns are owned solely by the GiveNamedItem post-hook (immediate + next frame).
     }
 
     // Post-hook on GiveNamedItem: fires whenever the engine gives a weapon to a
@@ -456,17 +456,6 @@ public class BotRandomizerPlugin : BasePlugin
 
         var player = new CCSPlayerController(pawn.Controller.Value.Handle);
         return player.IsValid ? player : null;
-    }
-
-    private void ApplyWeaponSkins(int slot, CCSPlayerPawn pawn)
-    {
-        if (_setAttrByName == null) return;
-
-        var weapons = pawn.WeaponServices?.MyWeapons;
-        if (weapons == null) return;
-
-        foreach (var handle in weapons)
-            ApplyRandomSkin(slot, handle.Value);
     }
 
     // Apply this bot's skin to a single gun. Knives are skipped here; they are
@@ -552,11 +541,14 @@ public class BotRandomizerPlugin : BasePlugin
                 if (w == null || !w.IsValid) continue;
                 var name = w.DesignerName;
                 if (string.IsNullOrEmpty(name)) continue;
-                if (!(name.Contains("knife") || name == "weapon_bayonet")) continue;
+                // Only morph the default base knife. A genuine specific knife
+                // (e.g. a picked-up weapon_knife_kukri) is owned by SyncPickedUpKnife.
+                if (name != "weapon_knife" && name != "weapon_knife_t") continue;
 
-                // Engine-side subclass swap: re-resolves model/anim/HUD without re-creating the entity.
-                if (w.AttributeManager?.Item?.ItemDefinitionIndex != defIndex)
-                    w.AcceptInput("ChangeSubclass", value: defIndex.ToString());
+                // Force subclass (model/anim) to match itemdef (name) on every pass.
+                // ChangeSubclass is async and may miss on a not-yet-deployed entity;
+                // gating it on itemdef would leave them permanently out of sync.
+                w.AcceptInput("ChangeSubclass", value: defIndex.ToString());
 
                 var item = w.AttributeManager?.Item;
                 if (item == null) break;
@@ -700,8 +692,11 @@ public class BotRandomizerPlugin : BasePlugin
         if (pawn == null || !pawn.IsValid)
             return HookResult.Continue;
 
-        // Deferred a frame so the picked-up knife entity is fully settled.
+        // Deferred + retried so a frame where ChangeSubclass doesn't take can't
+        // leave the knife's subclass permanently out of sync.
         Server.NextFrame(() => SyncPickedUpKnife(pawn));
+        AddTimer(0.10f, () => { if (pawn != null && pawn.IsValid) SyncPickedUpKnife(pawn); });
+        AddTimer(0.25f, () => { if (pawn != null && pawn.IsValid) SyncPickedUpKnife(pawn); });
         return HookResult.Continue;
     }
 

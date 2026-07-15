@@ -55,7 +55,7 @@ type Store = {
   refreshDirectory: () => Promise<DirectoryInfo | null>;
   refreshFiles: () => Promise<void>;
   refreshDifficulty: () => Promise<void>;
-  refreshAll: () => Promise<void>;
+  refreshAll: (silent?: boolean) => Promise<void>;
   updateConfig: (patch: Partial<AppConfig>) => Promise<void>;
   chooseDirectory: (path: string) => Promise<void>;
   applyDifficulty: (level: DifficultyLevel) => Promise<DifficultyInfo | null>;
@@ -318,7 +318,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }
   }, [reportError]);
 
-  const refreshAll = useCallback(async () => {
+  const refreshAll = useCallback(async (silent = false) => {
     const info = await refreshDirectory();
     const csgo = info?.valid ? info.selected : null;
     if (csgo) {
@@ -348,6 +348,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         if (!b.cs2_running) clearBotItemsPending();
         if (!k.cs2_running) setDropKnivesPending(false);
       } catch (e) {
+        // Background poll: a transient read error shouldn't blank the UI or pop a
+        // modal — keep the last good state and wait for the next tick.
+        if (silent) return;
         setFiles(null);
         setDifficulty(null);
         setMode(null);
@@ -445,12 +448,41 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         } catch {
           /* best-effort cleanup of legacy .bak files */
         }
+        try {
+          // Bring CounterStrikeSharp's core.json FollowCS2ServerGuidelines in
+          // line with the current Skins state on every launch.
+          await api.reconcileCoreJson(csgo);
+        } catch {
+          /* best-effort: core.json / core.example.json may be absent */
+        }
       }
       await refreshAll();
       setReady(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Live updates: while the panel is open and visible, re-scan every 0.5s so all
+  // indicator lights and buttons reflect the current on-disk / CS2-running state
+  // without the user reopening the panel. Silent (never pops an error modal),
+  // non-overlapping (skips a tick if the previous scan is still in flight), and
+  // paused while the window is hidden/minimized to avoid needless work.
+  const pollingRef = useRef(false);
+  useEffect(() => {
+    if (!ready) return;
+    const tick = async () => {
+      if (document.visibilityState !== "visible") return;
+      if (pollingRef.current) return;
+      pollingRef.current = true;
+      try {
+        await refreshAll(true);
+      } finally {
+        pollingRef.current = false;
+      }
+    };
+    const id = window.setInterval(tick, 500);
+    return () => window.clearInterval(id);
+  }, [ready, refreshAll]);
 
   const value: Store = {
     ready,

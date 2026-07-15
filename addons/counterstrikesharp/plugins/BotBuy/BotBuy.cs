@@ -12,7 +12,7 @@ namespace BotBuyPatch;
 public sealed class BotBuyPatch : BasePlugin
 {
     public override string ModuleName        => "BotBuyPatch";
-    public override string ModuleVersion     => "1.0.11";
+    public override string ModuleVersion     => "1.0.12";
     public override string ModuleAuthor      => "ed0ard";
     public override string ModuleDescription => "Enable bots to take more buy options";
 
@@ -74,7 +74,7 @@ public sealed class BotBuyPatch : BasePlugin
 
         foreach (var player in Utilities.FindAllEntitiesByDesignerName<CCSPlayerController>("cs_player_controller"))
         {
-            if (!player.IsValid) continue;  
+            if (!player.IsValid) continue;
             allPlayers.Add(player);
 
             if (player.Team == CsTeam.CounterTerrorist)
@@ -288,7 +288,7 @@ public sealed class BotBuyPatch : BasePlugin
         // Big Advantage
         AddTimer(0.6f, () =>
         {
-            if (!IsFirstRoundOfHalf())  
+            if (!IsFirstRoundOfHalf())
             {
                 foreach (var p in allPlayers)
                 {
@@ -355,7 +355,7 @@ public sealed class BotBuyPatch : BasePlugin
         // Don't buy Armor if it's above 40
         AddTimer(1.0f, () =>
         {
-            if (!IsFirstRoundOfHalf())  
+            if (!IsFirstRoundOfHalf())
             {
                 foreach (var p in allPlayers)
                 {
@@ -462,7 +462,7 @@ public sealed class BotBuyPatch : BasePlugin
         // Drop Weapons
         AddTimer(2.0f, () =>
         {
-            if (!IsFirstRoundOfHalf())  
+            if (!IsFirstRoundOfHalf())
             {
                 foreach (var team in new[] { CsTeam.CounterTerrorist, CsTeam.Terrorist })
                 {
@@ -675,7 +675,7 @@ public sealed class BotBuyPatch : BasePlugin
             case "weapon_mp7":               price = 1500; break;
             case "weapon_mp5sd":             price = 1500; break;
             case "weapon_ump45":             price = 1200; break;
-            case "weapon_bizon":             price = 1400; break;   
+            case "weapon_bizon":             price = 1400; break;
             case "weapon_p90":               price = 2350; break;
 
             case "weapon_nova":              price = 1050; break;
@@ -800,7 +800,7 @@ public sealed class BotBuyPatch : BasePlugin
 
         if (!canRefund)
             return false;
-        
+
         if (itemName.StartsWith("weapon_"))
         {
             player.RemoveItemByDesignerName(itemName);
@@ -812,6 +812,10 @@ public sealed class BotBuyPatch : BasePlugin
         }
 
         player.InGameMoneyServices.Account += price;
+        // Cap at mp_maxmoney
+        int maxMoney = ConVar.Find("mp_maxmoney")?.GetPrimitiveValue<int>() ?? 16000;
+        if (player.InGameMoneyServices.Account > maxMoney)
+            player.InGameMoneyServices.Account = maxMoney;
         Utilities.SetStateChanged(player, "CCSPlayerController", "m_pInGameMoneyServices");
 
         return true;
@@ -819,7 +823,7 @@ public sealed class BotBuyPatch : BasePlugin
 
     private bool CanRefund(CCSPlayerController player, string itemName)
     {
-        if (IsFirstRoundOfHalf()) 
+        if (IsFirstRoundOfHalf())
             return true;
 
         if (!player.IsValid || !player.IsBot)

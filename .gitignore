@@ -3,6 +3,7 @@
 
 # Build output and deploy backups (ship full ZIPs via GitHub Releases, not Git)
 dist/
+artifacts/
 deploy_backups/
 *.zip
 *.7z
